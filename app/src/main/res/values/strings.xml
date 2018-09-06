@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="EmpId">請輸入員工ID</string>
+    <string name="Password">請輸入密碼</string>
+    <string name="Login">登入</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_order">點餐</string>
+    <string name="title_serve">出餐</string>
+    <string name="title_delivery">外送</string>
+</resources>
