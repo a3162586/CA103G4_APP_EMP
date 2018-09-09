@@ -7,4 +7,5 @@
     <string name="title_order">點餐</string>
     <string name="title_serve">出餐</string>
     <string name="title_delivery">外送</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
