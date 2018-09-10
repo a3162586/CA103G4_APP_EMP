@@ -2,6 +2,7 @@ package com.example.tony.myapplication;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
@@ -50,14 +51,10 @@ public class OrderFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                MyTable.Table table = (MyTable.Table) adapterView.getItemAtPosition(i);
-                ImageView imageView = new ImageView(getActivity());
-                imageView.setImageResource(table.getTableImg());
-                Toast toast = new Toast(getActivity());
-                toast.setView(imageView);
-                toast.setDuration(Toast.LENGTH_SHORT);
-                toast.show();
-
+                Intent intent = new Intent(getActivity(),OrderAddActivity.class);
+                Bundle bundle = new Bundle();
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 

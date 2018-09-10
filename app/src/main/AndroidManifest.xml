@@ -19,6 +19,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" />
+        <activity android:name=".OrderAddActivity" />
+        <activity android:name=".OrderConfirmActivity"></activity>
     </application>
 
 </manifest>
