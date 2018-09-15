@@ -1,6 +1,7 @@
 package com.example.tony.myapplication;
 
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
@@ -16,17 +17,19 @@ public class MenuListFragment extends ListFragment {
     public MenuListFragment() {
     }
 
-    private int position;
+    private int position = -1;
+    private MenuInfoFragment menuInfoFragment = new MenuInfoFragment();
+    private MenuInfoCustomFragment menuInfoCustomFragment = new MenuInfoCustomFragment();
+    private MenuInfoPopularFragment menuInfoPopularFragment = new MenuInfoPopularFragment();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         ArrayList<String> menuList = new ArrayList<>();
-        for (MenuVO.Menu menu : MenuVO.MENUS) {
-            menuList.add(menu.getMenu_Id());
-        }
-
+        menuList.add("經典餐點");
+        menuList.add("客製化餐點");
+        menuList.add("人氣餐點");
         setListAdapter(new ArrayAdapter<>(getActivity(), R.layout.fragment_menu_list, menuList));
 
         if (savedInstanceState != null) {
@@ -34,7 +37,7 @@ public class MenuListFragment extends ListFragment {
         }
 
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        showInfo();
+        showInfo(0);
     }
 
     @Override
@@ -44,23 +47,50 @@ public class MenuListFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        this.position = position;
-        showInfo();
+    public void onListItemClick(ListView l, View v, int nextPosition, long id) {
+        showInfo(nextPosition);
     }
 
-    private void showInfo() {
-        MenuInfoFragment menuInfoFragment = (MenuInfoFragment) getFragmentManager().findFragmentById(R.id.MenuInfo);
-        if (menuInfoFragment == null || menuInfoFragment.getPosition() != position) {
-            menuInfoFragment = new MenuInfoFragment();
+    private void showInfo(int nextPosition) {
+
+        if (position != nextPosition) {
             Bundle bundle = new Bundle();
-            bundle.putInt("position", position);
-            menuInfoFragment.setArguments(bundle);
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.MenuInfo, menuInfoFragment);
-            //加入過場動畫
-            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            ft.commit();
+            FragmentTransaction ft;
+
+            switch(nextPosition){
+                case 0:
+                    bundle.putInt("position", nextPosition);
+                    menuInfoFragment.setArguments(bundle);
+
+                    ft = getFragmentManager().beginTransaction();
+                    ft.replace(R.id.MenuInfo, menuInfoFragment);
+                    //加入過場動畫
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    ft.commit();
+                    break;
+                case 1:
+                    bundle.putInt("position", nextPosition);
+                    menuInfoCustomFragment.setArguments(bundle);
+
+                    ft = getFragmentManager().beginTransaction();
+                    ft.replace(R.id.MenuInfo, menuInfoCustomFragment);
+                    //加入過場動畫
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    ft.commit();
+                    break;
+
+                case 2:
+                    bundle.putInt("position", nextPosition);
+                    menuInfoPopularFragment.setArguments(bundle);
+
+                    ft = getFragmentManager().beginTransaction();
+                    ft.replace(R.id.MenuInfo, menuInfoPopularFragment);
+                    //加入過場動畫
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    ft.commit();
+                    break;
+            }
+            position = nextPosition;
         }
     }
 }

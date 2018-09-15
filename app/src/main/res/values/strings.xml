@@ -12,4 +12,7 @@
     <string name="DeskNum">桌位01</string>
     <string name="Cancel">取消</string>
     <string name="Ok">確認</string>
+    <string name="menu_classic">經典餐點</string>
+    <string name="menu_custom">客製化餐點</string>
+    <string name="menu_popular">人氣餐點</string>
 </resources>
