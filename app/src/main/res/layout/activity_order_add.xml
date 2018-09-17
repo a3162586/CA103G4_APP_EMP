@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".OrderAddActivity">
+    tools:context=".activity.OrderAddActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
 
         <fragment
             android:id="@+id/menuList"
-            class="com.example.tony.myapplication.MenuListFragment"
+            class="com.example.tony.myapplication.fragment.MenuListFragment"
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="1" />

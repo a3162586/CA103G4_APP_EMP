@@ -1,28 +1,25 @@
-package com.example.tony.myapplication;
+package com.example.tony.myapplication.fragment;
 
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.example.tony.myapplication.MenuVO;
+import com.example.tony.myapplication.R;
+
 import java.util.List;
 
-public class MenuInfoCustomFragment extends Fragment {
+public class MenuInfoPopularFragment extends Fragment {
 
     private RecyclerView rvMenuInfo;
-    private List<MenuVO.Menu> menuList;
+    private List<MenuVO> menuList;
     private int position;
 
-    public MenuInfoCustomFragment() {
+    public MenuInfoPopularFragment() {
     }
 
     public int getPosition() {
@@ -39,7 +36,7 @@ public class MenuInfoCustomFragment extends Fragment {
 
         Bundle bundle = this.getArguments();
         position = bundle.getInt("position");
-        View view = inflater.inflate(R.layout.fragment_menu_info_custom, container, false);
+        View view = inflater.inflate(R.layout.fragment_menu_info_popular, container, false);
 
         return view;
     }

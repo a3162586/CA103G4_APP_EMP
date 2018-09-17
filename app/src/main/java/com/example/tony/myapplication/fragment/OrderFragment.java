@@ -1,18 +1,10 @@
-package com.example.tony.myapplication;
+package com.example.tony.myapplication.fragment;
 
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.internal.BottomNavigationMenuView;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +13,10 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.tony.myapplication.MyTable;
+import com.example.tony.myapplication.R;
+import com.example.tony.myapplication.activity.OrderAddActivity;
 
 import java.util.ArrayList;
 import java.util.List;

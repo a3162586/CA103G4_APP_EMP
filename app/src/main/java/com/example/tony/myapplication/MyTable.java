@@ -3,7 +3,7 @@ package com.example.tony.myapplication;
 public class MyTable {
 
     public static final int TOTALTABLES = 100;
-    static class Table {
+    public static class Table {
 
         private int tableNo;
         private int tableImg;

@@ -1,4 +1,4 @@
-package com.example.tony.myapplication;
+package com.example.tony.myapplication.activity;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.tony.myapplication.OrderInvoiceVO;
+import com.example.tony.myapplication.R;
 
 import java.util.ArrayList;
 import java.util.List;
