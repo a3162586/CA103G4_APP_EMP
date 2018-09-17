@@ -142,8 +142,11 @@ public class MenuInfoFragment extends Fragment {
             holder.tvMenu_ID.setText(menu.getMenu_Id());
             holder.tvMenu_Price.setText(Integer.toString(menu.getMenu_Price()));
 
+            BitmapFactory.Options opt = new BitmapFactory.Options();
             byte[] imageBytes = Base64.decode(menu.getMenu_Photo(), Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            // inSampleSize值即為縮放的倍數 (數字越大縮越多)
+            opt.inSampleSize = Util.getImageScale(imageBytes, 160, 160);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length,opt);
             holder.ivMenu_Photo.setImageBitmap(bitmap);
 
             holder.tvMenu_ID.setOnClickListener(new View.OnClickListener() {
