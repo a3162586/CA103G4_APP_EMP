@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.example.tony.myapplication.MenuVO;
 import com.example.tony.myapplication.R;
-import com.example.tony.myapplication.Util;
+import com.example.tony.myapplication.main.Util;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;

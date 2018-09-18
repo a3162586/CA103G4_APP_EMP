@@ -1,13 +1,15 @@
 package com.example.tony.myapplication.activity;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderAddActivity extends AppCompatActivity {
-
-    private ListView MenuDetail;
+    private Button btnMenuCancel,btnMenuOk;
+    private ListView menuDetail;
     private List<OrderInvoiceVO> orderList;
 
     @Override
@@ -31,13 +33,32 @@ public class OrderAddActivity extends AppCompatActivity {
 
         initOrderInvoice();
 
-        MenuDetail = findViewById(R.id.MenuDetail);
+        btnMenuCancel = findViewById(R.id.btnMenuCancel);
+        btnMenuOk = findViewById(R.id.btnMenuOk);
+        menuDetail = findViewById(R.id.MenuDetail);
         final OrderInvoiceAdapter adapter = new OrderInvoiceAdapter(this,orderList);
-        MenuDetail.setAdapter(adapter);
-        MenuDetail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        menuDetail.setAdapter(adapter);
+        menuDetail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 //新增item點擊事件
+            }
+        });
+        //返回上一頁
+        btnMenuCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OrderAddActivity.this.finish();
+            }
+        });
+        //進入訂單確認頁面
+        btnMenuOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(OrderAddActivity.this,OrderConfirmActivity.class);
+                Bundle bundle = new Bundle();
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
     }
