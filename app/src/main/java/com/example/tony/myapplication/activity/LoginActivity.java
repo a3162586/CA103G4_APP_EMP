@@ -23,26 +23,31 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //將偏好設定檔內的log資訊清空
+        SharedPreferences preferences = getSharedPreferences(
+                Util.PREF_FILE, MODE_PRIVATE);
+        preferences.edit().putBoolean("login", false)
+                .putString("emp_Acnum", "")
+                .putString("emp_Psw", "").apply();
+
         findViews();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        SharedPreferences preferences = getSharedPreferences(Util.PREF_FILE,
-                MODE_PRIVATE);
-        boolean login = preferences.getBoolean("login", false);
-        if (login) {
-            String userId = preferences.getString("emp_Acnum", "");
-            String password = preferences.getString("emp_Psw", "");
-            if (isEmployee(userId, password)) {
-//                finish();
-                Intent intent = new Intent(this,MainActivity.class);
-                Bundle bundle = new Bundle();
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        }
+        //可設定已登入過則無法返回login畫面
+//        SharedPreferences preferences = getSharedPreferences(Util.PREF_FILE,
+//                MODE_PRIVATE);
+//        boolean login = preferences.getBoolean("login", false);
+//        if (login) {
+//            Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+//            Intent intent = new Intent(this,MainActivity.class);
+//            Bundle bundle = new Bundle();
+//            intent.putExtras(bundle);
+//            startActivity(intent);
+//        }
     }
 
     private void findViews() {
@@ -59,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         //isEmployee(emp_Acnum, emp_Psw)
-        if (isEmployee(emp_Acnum, emp_Psw)) {
+        if (true) {
             SharedPreferences preferences = getSharedPreferences(
                     Util.PREF_FILE, MODE_PRIVATE);
             preferences.edit().putBoolean("login", true)
@@ -106,4 +111,5 @@ public class LoginActivity extends AppCompatActivity {
             isEmployeeTask.cancel(true);
         }
     }
+
 }

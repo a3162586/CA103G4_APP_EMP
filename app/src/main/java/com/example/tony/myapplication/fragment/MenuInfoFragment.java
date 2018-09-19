@@ -1,18 +1,11 @@
 package com.example.tony.myapplication.fragment;
 
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,65 +17,25 @@ import android.widget.Toast;
 import com.example.tony.myapplication.MenuVO;
 import com.example.tony.myapplication.R;
 import com.example.tony.myapplication.main.Util;
+import com.example.tony.myapplication.task.CommonTask;
+import com.example.tony.myapplication.task.ImageTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 
 public class MenuInfoFragment extends Fragment {
 
     private RecyclerView rvMenuInfo;
-    private int position;
+//    private int position;
     private final static String TAG = "MenuInfoFragment";
     private View view;
-    private AsyncTask retrieveMenuTask;
+    private CommonTask getMenuTask;
+    private ImageTask menuImageTask;
 
     public MenuInfoFragment() {
-    }
-
-    class RetrieveMenuTask extends AsyncTask<String , Integer, List<MenuVO>> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected List<MenuVO> doInBackground(String... params) {
-            String url = params[0];
-            String param = params[1];
-            String jsonIn;
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("param", param);
-            jsonIn = getRemoteData(url, jsonObject.toString());
-            Gson gson = new Gson();
-            Type listType = new TypeToken<List<MenuVO>>() {
-            }.getType();
-            return gson.fromJson(jsonIn, listType);
-        }
-
-        @Override
-        protected void onPostExecute(List<MenuVO> result) {
-            showResult(result);
-
-        }
-
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    private void showToast(Context context, int messageId) {
-        Toast.makeText(context, messageId, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -95,15 +48,38 @@ public class MenuInfoFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_menu_info, container, false);
 
         // check if the device connect to the network
-        if (networkConnected()) {
-            retrieveMenuTask = new RetrieveMenuTask().execute(Util.URL, "ALL");
+        if (Util.networkConnected(getActivity())) {
+
+            //宣告JasonObject物件，利用getMenuTask非同步任務連線到Servlet的 if ("getAll".equals(action))
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "getAll");
+            String jsonOut = jsonObject.toString();
+            getMenuTask = new CommonTask(Util.URL + "AndroidMenuServlet", jsonOut);
+
+            List<MenuVO> menuList = null;
+            try {
+
+                //將getMenuTask回傳的result重新轉型回List<MenuVO>物件
+                String jsonIn = getMenuTask.execute().get();
+                Type listType = new TypeToken<List<MenuVO>>() {
+                }.getType();
+                menuList = new Gson().fromJson(jsonIn, listType);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+            if (menuList == null || menuList.isEmpty()) {
+                Util.showToast(getActivity(), R.string.msg_MenusNotFound);
+            } else {
+                showResult(menuList);
+            }
+
         } else {
-            showToast(getActivity(), R.string.msg_NoNetwork);
+            Util.showToast(getActivity(), R.string.msg_NoNetwork);
         }
 
 
-        Bundle bundle = this.getArguments();
-        position = bundle.getInt("position");
+//        Bundle bundle = this.getArguments();
+//        position = bundle.getInt("position");
 
         return view;
     }
@@ -111,9 +87,11 @@ public class MenuInfoFragment extends Fragment {
     private class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
         private List<MenuVO> menuList;
+        private int imageSize;
 
         public MenuAdapter(List<MenuVO> menuList) {
             this.menuList = menuList;
+            imageSize = getResources().getDisplayMetrics().widthPixels / 4;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -142,14 +120,20 @@ public class MenuInfoFragment extends Fragment {
             holder.tvMenu_ID.setText(menu.getMenu_Id());
             holder.tvMenu_Price.setText(Integer.toString(menu.getMenu_Price()));
 
-            BitmapFactory.Options opt = new BitmapFactory.Options();
-            byte[] imageBytes = Base64.decode(menu.getMenu_Photo(), Base64.DEFAULT);
-            // inSampleSize值即為縮放的倍數 (數字越大縮越多)
-            opt.inSampleSize = Util.getImageScale(imageBytes, 160, 160);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length,opt);
-            holder.ivMenu_Photo.setImageBitmap(bitmap);
+//            BitmapFactory.Options opt = new BitmapFactory.Options();
+//            byte[] imageBytes = Base64.decode(menu.getMenu_Photo(), Base64.DEFAULT);
+//            // inSampleSize值即為縮放的倍數 (數字越大縮越多)
+//            opt.inSampleSize = Util.getImageScale(imageBytes, 160, 160);
+//            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length,opt);
+//            holder.ivMenu_Photo.setImageBitmap(bitmap);
 
-            holder.tvMenu_ID.setOnClickListener(new View.OnClickListener() {
+            //menuImageTask傳入ViewHolder物件，處理完之後會直接將圖show在對應的view上
+            String url = Util.URL + "AndroidMenuServlet";
+            String pk = menu.getMenu_No();
+            menuImageTask = new ImageTask(url, pk, imageSize, holder.ivMenu_Photo);
+            menuImageTask.execute();
+
+            holder.ivMenu_Photo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getActivity(),menu.getMenu_Id(),Toast.LENGTH_SHORT).show();
@@ -161,52 +145,6 @@ public class MenuInfoFragment extends Fragment {
         public int getItemCount() {
             return menuList.size();
         }
-    }
-
-    // check if the device connect to the network
-    private boolean networkConnected() {
-        ConnectivityManager conManager =
-                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
-    }
-
-    private String getRemoteData(String url, String outStr) {
-        HttpURLConnection connection = null;
-        StringBuilder inStr = new StringBuilder();
-        try {
-            connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.setDoInput(true); // allow inputs
-            connection.setDoOutput(true); // allow outputs
-            // 不知道請求內容大小時可以呼叫此方法將請求內容分段傳輸，設定0代表使用預設大小
-            connection.setChunkedStreamingMode(0);
-            connection.setUseCaches(false); // do not use a cached copy
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("charset", "UTF-8");
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-            bw.write(outStr);
-            Log.d(TAG, "output: " + outStr);
-            bw.close();
-
-            int responseCode = connection.getResponseCode();
-            if (responseCode == 200) {
-                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line;
-                while ((line = br.readLine()) != null) {
-                    inStr.append(line);
-                }
-            } else {
-                Log.d(TAG, "response code: " + responseCode);
-            }
-        } catch (IOException e) {
-            Log.e(TAG, e.toString());
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }
-        Log.d(TAG, "input: " + inStr);
-        return inStr.toString();
     }
 
     public void showResult(List<MenuVO> result) {
@@ -221,9 +159,9 @@ public class MenuInfoFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if (retrieveMenuTask != null) {
-            retrieveMenuTask.cancel(true);
-            retrieveMenuTask = null;
+        if (getMenuTask != null) {
+            getMenuTask.cancel(true);
+            getMenuTask = null;
         }
         super.onPause();
     }

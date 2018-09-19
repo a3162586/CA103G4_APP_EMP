@@ -1,13 +1,12 @@
 package com.example.tony.myapplication;
 
-public class MenuVO {
+public class MenuVO implements java.io.Serializable{
 
     private String Menu_No;
     private String Menu_Id;
     private String Menu_Type;
     private Integer Menu_Price;
     private String Menu_Intro;
-    private String Menu_Photo;
     private Integer Menu_Status;
 
 
@@ -15,14 +14,13 @@ public class MenuVO {
         super();
     }
 
-    public MenuVO(String Menu_No, String Menu_Id, String Menu_Type, Integer Menu_Price, String Menu_Intro, String Menu_Photo, Integer Menu_Status) {
+    public MenuVO(String Menu_No, String Menu_Id, String Menu_Type, Integer Menu_Price, String Menu_Intro, Integer Menu_Status) {
         super();
         this.Menu_No = Menu_No;
         this.Menu_Id = Menu_Id;
         this.Menu_Type = Menu_Type;
         this.Menu_Price = Menu_Price;
         this.Menu_Intro = Menu_Intro;
-        this.Menu_Photo = Menu_Photo;
         this.Menu_Status = Menu_Status;
     }
 
@@ -66,14 +64,6 @@ public class MenuVO {
         Menu_Intro = menu_Intro;
     }
 
-    public String getMenu_Photo() {
-        return Menu_Photo;
-    }
-
-    public void setMenu_Photo(String menu_Photo) {
-        Menu_Photo = menu_Photo;
-    }
-
     public Integer getMenu_Status() {
         return Menu_Status;
     }
@@ -86,4 +76,5 @@ public class MenuVO {
 
 
 }
+
 
