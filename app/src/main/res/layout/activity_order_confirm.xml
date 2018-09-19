@@ -1,9 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".activity.OrderConfirmActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvDeskNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textSize="32sp"
+            android:text="@string/DeskNum"/>
+
+        <TextView
+            android:id="@+id/tvTotalAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="32sp"
+            android:text="@string/TotalAmount"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textSize="16sp"
+            android:text="項次"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textSize="16sp"
+            android:text="餐點名稱"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textSize="16sp"
+            android:text="金額"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textSize="16sp"
+            android:text="數量"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/OrderDetail"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textSize="18sp"
+            android:text="優惠卷:"/>
+
+        <TextView
+            android:id="@+id/tvQrcode"
+            android:text="M-00000000001"
+            android:textSize="18sp"
+            android:textAlignment="center"
+            android:layout_width="180dp"
+            android:layout_height="24dp" />
+
+        <ImageView
+            android:id="@+id/ivQrcode"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/qrcode"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp">
+
+        <Button
+            android:id="@+id/btnMenuModify"
+            android:text="@string/modify"
+            android:textSize="16sp"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@+id/btnMenuSubmit" />
+
+        <Button
+            android:id="@+id/btnMenuSubmit"
+            android:text="@string/submit"
+            android:textSize="16sp"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

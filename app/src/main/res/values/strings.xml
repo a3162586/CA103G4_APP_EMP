@@ -10,8 +10,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_order_confirm">OrderConfirmActivity</string>
     <string name="DeskNum">桌位01</string>
+    <string name="TotalAmount">$100</string>
     <string name="Cancel">取消</string>
     <string name="Ok">確認</string>
+    <string name="modify">修改</string>
+    <string name="submit">送出</string>
+    <string name="search">查詢</string>
     <string name="menu_classic">經典餐點</string>
     <string name="menu_custom">客製化餐點</string>
     <string name="menu_popular">人氣餐點</string>

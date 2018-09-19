@@ -28,4 +28,7 @@ public class DeliveryFragment extends Fragment {
         return view;
     }
 
+    public void onSearch(View view) {
+
+    }
 }
