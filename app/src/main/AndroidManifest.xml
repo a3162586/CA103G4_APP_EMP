@@ -27,7 +27,6 @@
         <activity android:name=".activity.OrderAddActivity" />
         <activity android:name=".activity.OrderConfirmActivity" />
         <activity android:name=".activity.DeliveryDetailActivity" />
-        <activity android:name=".activity.DeliveryNavigateActivity"></activity>
     </application>
 
 </manifest>

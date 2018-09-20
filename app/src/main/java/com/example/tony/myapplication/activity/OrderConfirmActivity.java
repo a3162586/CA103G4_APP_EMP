@@ -75,7 +75,7 @@ public class OrderConfirmActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 String contents = intent.getStringExtra("SCAN_RESULT");
                 String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-                message = "Content: " + contents + "\nFormat: " + format;
+                message = contents;
             } else if (resultCode == RESULT_CANCELED) {
                 message = "Scan was Cancelled!";
             }
