@@ -64,10 +64,11 @@
 
     </LinearLayout>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/OrderDetail"
         android:layout_width="match_parent"
-        android:layout_height="300dp"/>
+        android:layout_height="300dp"
+        android:scrollbars="vertical"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

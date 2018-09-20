@@ -59,10 +59,10 @@ public class LoginActivity extends AppCompatActivity {
 
         String emp_Acnum = etEmpId.getText().toString().trim();
         String emp_Psw = etPassword.getText().toString().trim();
-        if (emp_Acnum.length() <= 0 || emp_Psw.length() <= 0) {
-            Toast.makeText(this, "帳號密碼錯誤，請重新輸入!", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if (emp_Acnum.length() <= 0 || emp_Psw.length() <= 0) {
+//            Toast.makeText(this, "帳號密碼錯誤，請重新輸入!", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         //isEmployee(emp_Acnum, emp_Psw)
         if (true) {
             SharedPreferences preferences = getSharedPreferences(
