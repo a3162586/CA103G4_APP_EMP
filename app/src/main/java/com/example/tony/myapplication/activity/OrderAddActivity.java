@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,6 +23,7 @@ import java.util.List;
 public class OrderAddActivity extends AppCompatActivity {
     private Button btnMenuCancel,btnMenuOk;
     private ListView menuDetail;
+    private OrderInvoiceAdapter adapter;
     private List<OrderInvoiceVO> orderList;
 
     @Override
@@ -31,19 +31,15 @@ public class OrderAddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_add);
 
-        initOrderInvoice();
-
         btnMenuCancel = findViewById(R.id.btnMenuCancel);
         btnMenuOk = findViewById(R.id.btnMenuOk);
         menuDetail = findViewById(R.id.MenuDetail);
-        final OrderInvoiceAdapter adapter = new OrderInvoiceAdapter(this,orderList);
-        menuDetail.setAdapter(adapter);
-        menuDetail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                //新增item點擊事件
-            }
-        });
+
+
+        menuDetail.addHeaderView(new View(this));
+        menuDetail.addFooterView(new View(this));
+        initOrderList(new ArrayList<OrderInvoiceVO>());
+
         //返回上一頁
         btnMenuCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,26 +59,10 @@ public class OrderAddActivity extends AppCompatActivity {
         });
     }
 
-    private void initOrderInvoice() {
-
-        orderList = new ArrayList<>();
-        orderList.add(new OrderInvoiceVO("01", "好吃的拉麵",R.drawable.ic_delete_black_24dp ));
-        orderList.add(new OrderInvoiceVO("02", "難吃的拉麵",R.drawable.ic_delete_black_24dp ));
-        orderList.add(new OrderInvoiceVO("03", "普通的拉麵",R.drawable.ic_delete_black_24dp ));
-        orderList.add(new OrderInvoiceVO("04", "很辣的拉麵",R.drawable.ic_delete_black_24dp ));
-        orderList.add(new OrderInvoiceVO("05", "酸酸的拉麵",R.drawable.ic_delete_black_24dp ));
-        orderList.add(new OrderInvoiceVO("06", "好吃的拉麵",R.drawable.ic_delete_black_24dp ));
-        orderList.add(new OrderInvoiceVO("07", "難吃的拉麵",R.drawable.ic_delete_black_24dp ));
-        orderList.add(new OrderInvoiceVO("08", "普通的拉麵",R.drawable.ic_delete_black_24dp ));
-        orderList.add(new OrderInvoiceVO("09", "很辣的拉麵",R.drawable.ic_delete_black_24dp ));
-        orderList.add(new OrderInvoiceVO("10", "酸酸的拉麵",R.drawable.ic_delete_black_24dp ));
-
-    }
-
     private class OrderInvoiceAdapter extends BaseAdapter {
         private LayoutInflater layoutInflater;
         private List<OrderInvoiceVO> orderList;
-        public OrderInvoiceAdapter(Context context, List<OrderInvoiceVO> orderList) {
+        private OrderInvoiceAdapter(Context context, List<OrderInvoiceVO> orderList) {
             this.orderList = orderList;
             layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         }
@@ -139,6 +119,20 @@ public class OrderAddActivity extends AppCompatActivity {
             ImageView ivDelete;
             TextView Invo_No, Menu_Id;
         }
+    }
+
+    public void initOrderList(List<OrderInvoiceVO> orderList) {
+        for(int i=1; i<=5; i++)
+            orderList.add(new OrderInvoiceVO("", ""));
+        adapter = new OrderInvoiceAdapter(this,orderList);
+        menuDetail.setAdapter(adapter);
+    }
+
+
+    //刷新orderList
+    public void setOrderList(List<OrderInvoiceVO> orderList) {
+        adapter = new OrderInvoiceAdapter(this,orderList);
+        menuDetail.setAdapter(adapter);
     }
 
 

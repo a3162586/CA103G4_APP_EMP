@@ -14,6 +14,11 @@ public class OrderInvoiceVO {
         this.deleteIcon = deleteIcon;
     }
 
+    public OrderInvoiceVO(String invo_No, String menu_Id) {
+        this.invo_No = invo_No;
+        this.menu_Id = menu_Id;
+    }
+
     public String getInvo_No() {
         return invo_No;
     }

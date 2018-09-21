@@ -1,6 +1,7 @@
 package com.example.tony.myapplication.fragment;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -10,12 +11,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tony.myapplication.MenuVO;
+import com.example.tony.myapplication.OrderInvoiceVO;
 import com.example.tony.myapplication.R;
+import com.example.tony.myapplication.activity.OrderAddActivity;
 import com.example.tony.myapplication.main.Util;
 import com.example.tony.myapplication.task.CommonTask;
 import com.example.tony.myapplication.task.ImageTask;
@@ -24,6 +28,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MenuInfoFragment extends Fragment {
@@ -34,8 +39,17 @@ public class MenuInfoFragment extends Fragment {
     private View view;
     private CommonTask getMenuTask;
     private ImageTask menuImageTask;
+    private List<MenuVO> menuList;
+
+    private OrderAddActivity oaa;
 
     public MenuInfoFragment() {
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        oaa = (OrderAddActivity) context;
     }
 
     @Override
@@ -56,7 +70,6 @@ public class MenuInfoFragment extends Fragment {
             String jsonOut = jsonObject.toString();
             getMenuTask = new CommonTask(Util.URL + "AndroidMenuServlet", jsonOut);
 
-            List<MenuVO> menuList = null;
             try {
 
                 //將getMenuTask回傳的result重新轉型回List<MenuVO>物件
@@ -97,12 +110,29 @@ public class MenuInfoFragment extends Fragment {
         class ViewHolder extends RecyclerView.ViewHolder {
             private ImageView ivMenu_Photo;
             private TextView tvMenu_ID,tvMenu_Price;
+            private Button btnMenu_Add;
+
+            private List<OrderInvoiceVO> orderList;
 
             public ViewHolder(View view) {
                 super(view);
                 ivMenu_Photo = view.findViewById(R.id.ivMenu_Photo);
                 tvMenu_ID = view.findViewById(R.id.tvMenu_ID);
                 tvMenu_Price = view.findViewById(R.id.tvMenu_Price);
+                btnMenu_Add = view.findViewById(R.id.btnMenuAdd);
+                btnMenu_Add.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //btnMenu_Add
+                        orderList = new ArrayList<>();
+                        orderList.add(new OrderInvoiceVO("1", "拉麵1",R.drawable.ic_delete_black_24dp ));
+                        orderList.add(new OrderInvoiceVO("2", "拉麵2",R.drawable.ic_delete_black_24dp ));
+                        orderList.add(new OrderInvoiceVO("3", "拉麵3",R.drawable.ic_delete_black_24dp ));
+                        orderList.add(new OrderInvoiceVO("4", "拉麵4",R.drawable.ic_delete_black_24dp ));
+                        orderList.add(new OrderInvoiceVO("5", "拉麵5",R.drawable.ic_delete_black_24dp ));
+                        oaa.setOrderList(orderList);
+                    }
+                });
             }
         }
 
@@ -118,7 +148,7 @@ public class MenuInfoFragment extends Fragment {
 
             final MenuVO menu = menuList.get(position);
             holder.tvMenu_ID.setText(menu.getMenu_Id());
-            holder.tvMenu_Price.setText(Integer.toString(menu.getMenu_Price()));
+            holder.tvMenu_Price.setText("$"+Integer.toString(menu.getMenu_Price()));
 
 //            BitmapFactory.Options opt = new BitmapFactory.Options();
 //            byte[] imageBytes = Base64.decode(menu.getMenu_Photo(), Base64.DEFAULT);

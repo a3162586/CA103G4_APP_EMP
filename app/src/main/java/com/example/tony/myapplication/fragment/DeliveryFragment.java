@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ public class DeliveryFragment extends Fragment {
 
     private RecyclerView rvDelivery;
     private Button btnSearch;
+    private Spinner spDeliverySearchMode,spDeliverySearchOption;
     private final static String TAG = "DeliveryFragment";
     private View view;
     private CommonTask getDeliveryTask;
@@ -49,6 +51,8 @@ public class DeliveryFragment extends Fragment {
         }
 
         view = inflater.inflate(R.layout.fragment_delivery, container, false);
+        spDeliverySearchMode = view.findViewById(R.id.spDeliverySearchMode);
+        spDeliverySearchOption = view.findViewById(R.id.spDeliverySearchOption);
         btnSearch = view.findViewById(R.id.btnSearch);
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override

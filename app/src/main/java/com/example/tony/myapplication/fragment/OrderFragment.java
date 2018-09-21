@@ -46,10 +46,12 @@ public class OrderFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                Intent intent = new Intent(getActivity(),OrderAddActivity.class);
+//                Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
+                Intent intent = new Intent(getActivity(), OrderAddActivity.class);
                 Bundle bundle = new Bundle();
                 intent.putExtras(bundle);
                 startActivity(intent);
+
             }
         });
 
@@ -70,7 +72,7 @@ public class OrderFragment extends Fragment {
         public TableAdpter(Context context, List<MyTable.Table> tableList) {
             this.tableList = tableList;
 
-            //在fragment中需先取得activity後才能調用getSystemService方法
+            // 在fragment中需先取得activity後才能調用getSystemService方法
             layoutInflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
         }
 
