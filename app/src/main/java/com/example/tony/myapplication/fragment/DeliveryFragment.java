@@ -38,7 +38,7 @@ public class DeliveryFragment extends Fragment {
     private RecyclerView rvDelivery;
     private Spinner spDeliverySearchMode,spDeliverySearchOption;
     private final static String TAG = "DeliveryFragment";
-    private View view;
+//    private View view;
     private CommonTask getDeliveryTask;
     private List<DeliveryVO> deliveryList = null;
 
@@ -55,41 +55,86 @@ public class DeliveryFragment extends Fragment {
             return null;
         }
 
-        view = inflater.inflate(R.layout.fragment_delivery, container, false);
+        View view = inflater.inflate(R.layout.fragment_delivery, container, false);
+        rvDelivery = view.findViewById(R.id.rvDelivery);
+        rvDelivery.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        rvDelivery.setLayoutManager(layoutManager);
+        rvDelivery.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         spDeliverySearchMode = view.findViewById(R.id.spDeliverySearchMode);
-        spDeliverySearchOption = view.findViewById(R.id.spDeliverySearchOption);
         spDeliverySearchMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String searchMode = spDeliverySearchMode.getSelectedItem().toString();
                 Set<String> set = new LinkedHashSet<>();
-                for(DeliveryVO deliveryVO : deliveryList) {
-                    if(deliveryVO.getEmp_no() != null)
-                        set.add(deliveryVO.getEmp_no());
-                }
-                String[] empNo = set.toArray(new String[set.size()]);
+                ArrayAdapter<String> adapter;
                 switch (searchMode) {
                     case "員工編號":
+
+                        for(DeliveryVO deliveryVO : deliveryList) {
+                            if(deliveryVO.getEmp_no() != null)
+                                set.add(deliveryVO.getEmp_no());
+                        }
+                        String[] empNo = set.toArray(new String[set.size()]);
+
                         // ArrayAdapter用來管理整個選項的內容與樣式，android.R.layout.simple_spinner_item為內建預設樣式
-                        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                        adapter = new ArrayAdapter<>
                                 (getActivity(), android.R.layout.simple_spinner_item, empNo);
 //                        // android.R.layout.simple_spinner_dropdown_item為內建下拉選單樣式
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spDeliverySearchOption.setAdapter(adapter);
                         spDeliverySearchOption.setSelection(0, true);
-                        spDeliverySearchOption.setOnItemSelectedListener(listener);
                         break;
                     case "派送單編號":
 
+                        for(DeliveryVO deliveryVO : deliveryList)
+                                set.add(deliveryVO.getDeliv_no());
+                        String[] deliveryNo = set.toArray(new String[set.size()]);
+
+                        // ArrayAdapter用來管理整個選項的內容與樣式，android.R.layout.simple_spinner_item為內建預設樣式
+                        adapter = new ArrayAdapter<>
+                                (getActivity(), android.R.layout.simple_spinner_item, deliveryNo);
+//                        // android.R.layout.simple_spinner_dropdown_item為內建下拉選單樣式
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spDeliverySearchOption.setAdapter(adapter);
+                        spDeliverySearchOption.setSelection(0, true);
                         break;
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                //nothing to do
+                // nothing to do
+            }
+
+        });
+
+        spDeliverySearchOption = view.findViewById(R.id.spDeliverySearchOption);
+        spDeliverySearchOption.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String searchMode = spDeliverySearchMode.getSelectedItem().toString();
+                String searchOption = spDeliverySearchOption.getSelectedItem().toString();
+                JsonObject jsonObject = new JsonObject();
+                if("員工編號".equals(searchMode)) {
+                    Log.e(TAG,searchMode);
+                    jsonObject.addProperty("action", "getEmpNo");
+                    jsonObject.addProperty("emp_no", searchOption);
+                }
+                else if("派送單編號".equals(searchMode)) {
+                    jsonObject.addProperty("action", "getDelivNo");
+                    jsonObject.addProperty("deliv_no", searchOption);
+                }
+                String jsonOut = jsonObject.toString();
+                updateUI(jsonOut);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // nothing to do
             }
         });
+
 
         // check if the device connect to the network
         if (Util.networkConnected(getActivity())) {
@@ -111,11 +156,8 @@ public class DeliveryFragment extends Fragment {
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
             }
-            if (deliveryList == null || deliveryList.isEmpty()) {
+            if (deliveryList == null || deliveryList.isEmpty())
                 Util.showToast(getActivity(), R.string.msg_DeliveryNotFound);
-            } else {
-                showResult(deliveryList);
-            }
 
         } else {
             Util.showToast(getActivity(), R.string.msg_NoNetwork);
@@ -192,28 +234,13 @@ public class DeliveryFragment extends Fragment {
         }
     }
 
-    public Spinner.OnItemSelectedListener listener = new Spinner.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            Toast.makeText(getActivity(), "test", Toast.LENGTH_SHORT).show();
-        }
 
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-            // Nothing to do here...
-        }
-    };
-
-    public void showResult(List<DeliveryVO> result) {
-
-        rvDelivery = view.findViewById(R.id.rvDelivery);
-        rvDelivery.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        rvDelivery.setLayoutManager(layoutManager);
-        rvDelivery.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-        rvDelivery.setAdapter(new DeliveryAdapter(result));
-
-    }
+//    public void showResult(List<DeliveryVO> result) {
+//
+//
+//        rvDelivery.setAdapter(new DeliveryAdapter(result));
+//
+//    }
 
     private void updateUI(String jsonOut) {
         getDeliveryTask = new CommonTask(Util.URL + "AndroidDeliveryServlet", jsonOut);

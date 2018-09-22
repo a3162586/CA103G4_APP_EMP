@@ -21,6 +21,7 @@
             android:layout_height="wrap_content" />
 
         <LinearLayout
+            android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -28,34 +29,63 @@
 
             <Spinner
                 android:id="@+id/spDeliverySearchMode"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:entries="@array/deliverySearch_array"
                 android:spinnerMode="dropdown" />
 
 
             <Spinner
                 android:id="@+id/spDeliverySearchOption"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:spinnerMode="dropdown" />
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textView1"
+        <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="55dp"
-            android:text="外送單:" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/linearLayout1">
+
+            <TextView
+                android:id="@+id/textView1"
+                android:textColor="@color/colorRed"
+                android:layout_width="95dp"
+                android:layout_height="20dp"
+                android:text="派送單編號:" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:textColor="@color/colorRed"
+                android:layout_width="75dp"
+                android:layout_height="20dp"
+                android:text="分店編號:" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:textColor="@color/colorRed"
+                android:layout_width="85dp"
+                android:layout_height="20dp"
+                android:text="員工編號:" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:textColor="@color/colorRed"
+                android:layout_width="75dp"
+                android:layout_height="20dp"
+                android:text="派送單狀態:" />
+
+        </LinearLayout>
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvDelivery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView1"
+            android:layout_below="@+id/linearLayout2"
             android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
