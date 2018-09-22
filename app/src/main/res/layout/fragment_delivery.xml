@@ -13,35 +13,42 @@
         android:paddingRight="16dp"
         android:paddingTop="16dp">
 
-        <Spinner
-            android:id="@+id/spDeliverySearchMode"
+        <TextView
+            android:id="@+id/tvChoiceSearchMode"
+            android:text="選擇查詢方式:"
+            android:textColor="@color/colorRed"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/btnSearch"
-            android:layout_marginLeft="10dp" />
+            android:layout_height="wrap_content" />
 
-        <Spinner
-            android:id="@+id/spDeliverySearchOption"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/btnSearch"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/spDeliverySearchMode" />
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/tvChoiceSearchMode">
 
-        <Button
-            android:id="@+id/btnSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:text="@string/search" />
+            <Spinner
+                android:id="@+id/spDeliverySearchMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:entries="@array/deliverySearch_array"
+                android:spinnerMode="dropdown" />
+
+
+            <Spinner
+                android:id="@+id/spDeliverySearchOption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:spinnerMode="dropdown" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textView1"
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:layout_alignRight="@+id/btnSearch"
-            android:layout_below="@+id/btnSearch"
+            android:layout_marginTop="55dp"
             android:text="外送單:" />
 
         <android.support.v7.widget.RecyclerView

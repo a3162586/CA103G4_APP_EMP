@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,16 +29,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DeliveryFragment extends Fragment {
 
     private RecyclerView rvDelivery;
-    private Button btnSearch;
     private Spinner spDeliverySearchMode,spDeliverySearchOption;
     private final static String TAG = "DeliveryFragment";
     private View view;
     private CommonTask getDeliveryTask;
+    private List<DeliveryVO> deliveryList = null;
 
     public DeliveryFragment() {
         // Required empty public constructor
@@ -53,11 +58,36 @@ public class DeliveryFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_delivery, container, false);
         spDeliverySearchMode = view.findViewById(R.id.spDeliverySearchMode);
         spDeliverySearchOption = view.findViewById(R.id.spDeliverySearchOption);
-        btnSearch = view.findViewById(R.id.btnSearch);
-        btnSearch.setOnClickListener(new View.OnClickListener() {
+        spDeliverySearchMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), "test", Toast.LENGTH_SHORT).show();
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String searchMode = spDeliverySearchMode.getSelectedItem().toString();
+                Set<String> set = new LinkedHashSet<>();
+                for(DeliveryVO deliveryVO : deliveryList) {
+                    if(deliveryVO.getEmp_no() != null)
+                        set.add(deliveryVO.getEmp_no());
+                }
+                String[] empNo = set.toArray(new String[set.size()]);
+                switch (searchMode) {
+                    case "員工編號":
+                        // ArrayAdapter用來管理整個選項的內容與樣式，android.R.layout.simple_spinner_item為內建預設樣式
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                                (getActivity(), android.R.layout.simple_spinner_item, empNo);
+//                        // android.R.layout.simple_spinner_dropdown_item為內建下拉選單樣式
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spDeliverySearchOption.setAdapter(adapter);
+                        spDeliverySearchOption.setSelection(0, true);
+                        spDeliverySearchOption.setOnItemSelectedListener(listener);
+                        break;
+                    case "派送單編號":
+
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                //nothing to do
             }
         });
 
@@ -70,7 +100,6 @@ public class DeliveryFragment extends Fragment {
             String jsonOut = jsonObject.toString();
             getDeliveryTask = new CommonTask(Util.URL + "AndroidDeliveryServlet", jsonOut);
 
-            List<DeliveryVO> deliveryList = null;
             try {
 
                 //將getDeliveryTask回傳的result重新轉型回List<DeliveryVO>物件
@@ -78,6 +107,7 @@ public class DeliveryFragment extends Fragment {
                 Type listType = new TypeToken<List<DeliveryVO>>() {
                 }.getType();
                 deliveryList = new Gson().fromJson(jsonIn, listType);
+
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
             }
@@ -162,14 +192,45 @@ public class DeliveryFragment extends Fragment {
         }
     }
 
+    public Spinner.OnItemSelectedListener listener = new Spinner.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            Toast.makeText(getActivity(), "test", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            // Nothing to do here...
+        }
+    };
+
     public void showResult(List<DeliveryVO> result) {
 
         rvDelivery = view.findViewById(R.id.rvDelivery);
         rvDelivery.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rvDelivery.setLayoutManager(layoutManager);
+        rvDelivery.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         rvDelivery.setAdapter(new DeliveryAdapter(result));
 
+    }
+
+    private void updateUI(String jsonOut) {
+        getDeliveryTask = new CommonTask(Util.URL + "AndroidDeliveryServlet", jsonOut);
+        List<DeliveryVO> deliveryList = null;
+        try {
+            String jsonIn = getDeliveryTask.execute().get();
+            Type listType = new TypeToken<List<DeliveryVO>>() {
+            }.getType();
+            deliveryList = new Gson().fromJson(jsonIn, listType);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+        if (deliveryList == null || deliveryList.isEmpty()) {
+            Util.showToast(getActivity(), R.string.msg_DeliveryNotFound);
+        } else {
+            rvDelivery.setAdapter(new DeliveryAdapter(deliveryList));
+        }
     }
 
     @Override
