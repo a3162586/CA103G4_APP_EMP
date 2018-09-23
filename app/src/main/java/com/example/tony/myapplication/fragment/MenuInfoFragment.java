@@ -42,6 +42,7 @@ public class MenuInfoFragment extends Fragment {
     private List<MenuVO> menuList;
 
     private OrderAddActivity oaa;
+    private List<OrderInvoiceVO> orderList = new ArrayList<>();
 
     public MenuInfoFragment() {
     }
@@ -112,27 +113,12 @@ public class MenuInfoFragment extends Fragment {
             private TextView tvMenu_ID,tvMenu_Price;
             private Button btnMenu_Add;
 
-            private List<OrderInvoiceVO> orderList;
-
             public ViewHolder(View view) {
                 super(view);
                 ivMenu_Photo = view.findViewById(R.id.ivMenu_Photo);
                 tvMenu_ID = view.findViewById(R.id.tvMenu_ID);
                 tvMenu_Price = view.findViewById(R.id.tvMenu_Price);
                 btnMenu_Add = view.findViewById(R.id.btnMenuAdd);
-                btnMenu_Add.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //btnMenu_Add
-                        orderList = new ArrayList<>();
-                        orderList.add(new OrderInvoiceVO("1", "拉麵1",R.drawable.ic_delete_black_24dp ));
-                        orderList.add(new OrderInvoiceVO("2", "拉麵2",R.drawable.ic_delete_black_24dp ));
-                        orderList.add(new OrderInvoiceVO("3", "拉麵3",R.drawable.ic_delete_black_24dp ));
-                        orderList.add(new OrderInvoiceVO("4", "拉麵4",R.drawable.ic_delete_black_24dp ));
-                        orderList.add(new OrderInvoiceVO("5", "拉麵5",R.drawable.ic_delete_black_24dp ));
-                        oaa.setOrderList(orderList);
-                    }
-                });
             }
         }
 
@@ -150,13 +136,6 @@ public class MenuInfoFragment extends Fragment {
             holder.tvMenu_ID.setText(menu.getMenu_Id());
             holder.tvMenu_Price.setText("$"+Integer.toString(menu.getMenu_Price()));
 
-//            BitmapFactory.Options opt = new BitmapFactory.Options();
-//            byte[] imageBytes = Base64.decode(menu.getMenu_Photo(), Base64.DEFAULT);
-//            // inSampleSize值即為縮放的倍數 (數字越大縮越多)
-//            opt.inSampleSize = Util.getImageScale(imageBytes, 160, 160);
-//            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length,opt);
-//            holder.ivMenu_Photo.setImageBitmap(bitmap);
-
             //menuImageTask傳入ViewHolder物件，處理完之後會直接將圖show在對應的view上
             String url = Util.URL + "AndroidMenuServlet";
             String pk = menu.getMenu_No();
@@ -167,6 +146,15 @@ public class MenuInfoFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getActivity(),menu.getMenu_Id(),Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            holder.btnMenu_Add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    orderList.add(new OrderInvoiceVO("1", menu.getMenu_Id(),R.drawable.ic_delete_black_24dp ));
+                    oaa.setOrderList(orderList);
                 }
             });
         }

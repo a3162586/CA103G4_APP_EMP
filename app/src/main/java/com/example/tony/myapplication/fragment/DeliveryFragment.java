@@ -184,15 +184,15 @@ public class DeliveryFragment extends Fragment {
                 branch_No = view.findViewById(R.id.branch_No);
                 emp_No = view.findViewById(R.id.emp_No);
                 deliv_Status = view.findViewById(R.id.deliv_Status);
-                deliv_Status.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
-                        Bundle bundle = new Bundle();
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    }
-                });
+//                deliv_Status.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
+//                        Bundle bundle = new Bundle();
+//                        intent.putExtras(bundle);
+//                        startActivity(intent);
+//                    }
+//                });
             }
         }
 
@@ -210,11 +210,11 @@ public class DeliveryFragment extends Fragment {
             String status = "";
             switch (delivery.getDeliv_status()) {
                 case "1":
-                    status = "等待派送";
+                    status = "尚未分配";
+                    holder.deliv_Status.setEnabled(false);
                     break;
                 case "2":
-                    status = "已派送";
-                    holder.deliv_Status.setEnabled(false);
+                    status = "開始派送";
                     break;
                 case "3":
                     status = "派送完成";
@@ -226,6 +226,17 @@ public class DeliveryFragment extends Fragment {
             holder.branch_No.setText(delivery.getBranch_no());
             holder.emp_No.setText(delivery.getEmp_no());
             holder.deliv_Status.setText(status);
+            holder.deliv_Status.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("delivNo",delivery.getDeliv_no());
+                    bundle.putString("empNo",delivery.getEmp_no());
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            });
         }
 
         @Override

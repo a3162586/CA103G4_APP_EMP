@@ -55,8 +55,9 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
         LocationListener {
 
     private RecyclerView rvOrderDetail;
+    private TextView tvDelivNo,tvEmpName;
     private final static String TAG = "DeliveryDetailActivity";
-    private View view;
+//    private View view;
     private CommonTask getDeliveryTask;
 
     private static final int MY_REQUEST_CODE = 0;
@@ -71,11 +72,19 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delivery_detail);
+        tvDelivNo = findViewById(R.id.tvDelivNo);
+        tvEmpName = findViewById(R.id.tvEmpName);
+
+        Bundle bundle = this.getIntent().getExtras();
+        String DelivNo = bundle.getString("delivNo");
+        String empNo = bundle.getString("empNo");
+        tvDelivNo.setText(DelivNo);
+        tvEmpName.setText(empNo);
 
         // check if the device connect to the network
         if (Util.networkConnected(this)) {
 
-            //宣告JasonObject物件，利用getMenuTask非同步任務連線到Servlet的 if ("getAll".equals(action))
+            //宣告JasonObject物件，利用getDeliveryTask非同步任務連線到Servlet的 if ("getAll".equals(action))
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "getAll");
             String jsonOut = jsonObject.toString();

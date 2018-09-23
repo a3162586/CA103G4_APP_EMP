@@ -10,33 +10,36 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp">
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:textSize="16sp"
             android:text="派送單號:"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvDelivNo"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:textSize="16sp"
             android:text="D-000000001"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:textSize="16sp"
             android:text="派送員:"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvEmpName"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:textSize="16sp"
             android:text="王小明"/>
 

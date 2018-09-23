@@ -21,33 +21,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderAddActivity extends AppCompatActivity {
+    private TextView tvDeskNum;
     private Button btnMenuCancel,btnMenuOk;
     private ListView menuDetail;
     private OrderInvoiceAdapter adapter;
-    private List<OrderInvoiceVO> orderList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_add);
 
+        tvDeskNum = findViewById(R.id.tvDeskNum);
         btnMenuCancel = findViewById(R.id.btnMenuCancel);
         btnMenuOk = findViewById(R.id.btnMenuOk);
         menuDetail = findViewById(R.id.MenuDetail);
 
+        Bundle bundle = this.getIntent().getExtras();
+        String dek_Id = bundle.getString("dek_Id");
+        tvDeskNum.setText("桌位"+dek_Id);
 
+        // 加入上下格線
         menuDetail.addHeaderView(new View(this));
         menuDetail.addFooterView(new View(this));
         initOrderList(new ArrayList<OrderInvoiceVO>());
 
-        //返回上一頁
+        // 返回上一頁
         btnMenuCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 OrderAddActivity.this.finish();
             }
         });
-        //進入訂單確認頁面
+        // 進入訂單確認頁面
         btnMenuOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,7 +104,7 @@ public class OrderAddActivity extends AppCompatActivity {
             }
 
             final OrderInvoiceVO orderInvoice = orderList.get(position);
-            holder.Invo_No.setText(orderInvoice.getInvo_No());
+            holder.Invo_No.setText(Integer.toString(position+1));
             holder.Menu_Id.setText(orderInvoice.getMenu_Id());
             holder.ivDelete.setImageResource(orderInvoice.getDeleteIcon());
 
