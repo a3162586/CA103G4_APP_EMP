@@ -153,7 +153,7 @@ public class MenuInfoFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
 
-                    orderList.add(new OrderInvoiceVO("1", menu.getMenu_Id(),R.drawable.ic_delete_black_24dp ));
+                    orderList.add(new OrderInvoiceVO(menu.getMenu_No(), menu.getMenu_No(),menu.getMenu_Id(), menu.getMenu_Price(),R.drawable.ic_delete_black_24dp ));
                     oaa.setOrderList(orderList);
                 }
             });

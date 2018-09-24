@@ -16,12 +16,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.tony.myapplication.BranchVO;
-import com.example.tony.myapplication.DeliveryVO;
 import com.example.tony.myapplication.DeskVO;
-import com.example.tony.myapplication.MyTable;
 import com.example.tony.myapplication.R;
-import com.example.tony.myapplication.activity.DeliveryDetailActivity;
 import com.example.tony.myapplication.activity.OrderAddActivity;
 import com.example.tony.myapplication.main.Util;
 import com.example.tony.myapplication.task.CommonTask;
@@ -30,7 +26,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
@@ -40,9 +35,8 @@ public class OrderFragment extends Fragment {
     private final static String TAG = "OrderFragment";
     private GridView gdTable;
     private List<DeskVO> deskList;
-
-    private View view;
     private CommonTask getDeskTask;
+    private String branch_no;
 
     public OrderFragment() {
     }
@@ -51,7 +45,7 @@ public class OrderFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_order, container, false);
+        View view = inflater.inflate(R.layout.fragment_order, container, false);
 
         // check if the device connect to the network
         if (Util.networkConnected(getActivity())) {
@@ -62,7 +56,7 @@ public class OrderFragment extends Fragment {
 
             SharedPreferences preferences = getActivity().getSharedPreferences(Util.PREF_FILE,
                 getActivity().MODE_PRIVATE);
-            String branch_no = preferences.getString("branch_No", "");
+            branch_no = preferences.getString("branch_No", "");
             jsonObject.addProperty("branch_no",branch_no);
             String jsonOut = jsonObject.toString();
             getDeskTask = new CommonTask(Util.URL + "AndroidDeskServlet", jsonOut);
@@ -81,11 +75,8 @@ public class OrderFragment extends Fragment {
             Util.showToast(getActivity(), R.string.msg_NoNetwork);
         }
 
-//        initTables();
-
         gdTable = view.findViewById(R.id.gvTable);
         gdTable.setAdapter(new TableAdpter(getActivity(),deskList));
-
         gdTable.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -96,12 +87,6 @@ public class OrderFragment extends Fragment {
 
         return view;
     }
-
-//    private void initTables() {
-//        deskList = new ArrayList<>();
-//        for(int i=1 ; i<=deskList.size() ; i++)
-//            deskList.add(new DeskVO(i,R.drawable.table,"空桌"));
-//    }
 
     public class TableAdpter extends BaseAdapter {
 
@@ -145,22 +130,25 @@ public class OrderFragment extends Fragment {
             }
 
             DeskVO desk = deskList.get(i);
-            String status = null;
+            final String dek_No = desk.getDek_no();
             final String dek_Id = desk.getDek_id();
+
             switch (desk.getDek_status()) {
                 case 0:
-                    status = "空桌";
+                    holder.tvTableStatus.setText("空桌");
+                    holder.tvTableNo.setBackgroundColor(getResources().getColor(R.color.colorWhite));
                     break;
                 case 1:
-                    status = "使用中";
+                    holder.tvTableStatus.setText("使用中");
+                    holder.tvTableNo.setBackgroundColor(getResources().getColor(R.color.colorYellow));
                     break;
                 case 2:
-                    status = "已訂位";
+                    holder.tvTableStatus.setText("已訂位");
+                    holder.tvTableNo.setBackgroundColor(getResources().getColor(R.color.colorLightBlue));
                     break;
             }
 
             holder.ivTableImg.setImageResource(R.drawable.table);
-            holder.tvTableStatus.setText(status);
             holder.tvTableNo.setText(dek_Id);
             holder.ivTableImg.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -168,6 +156,8 @@ public class OrderFragment extends Fragment {
 //                    Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
                     Intent intent = new Intent(getActivity(), OrderAddActivity.class);
                     Bundle bundle = new Bundle();
+                    bundle.putString("dek_No",dek_No);
+                    bundle.putString("branch_No",branch_no);
                     bundle.putString("dek_Id",dek_Id);
                     intent.putExtras(bundle);
                     startActivity(intent);

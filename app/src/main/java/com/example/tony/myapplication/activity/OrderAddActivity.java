@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.tony.myapplication.OrderInvoiceVO;
 import com.example.tony.myapplication.R;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class OrderAddActivity extends AppCompatActivity {
     private Button btnMenuCancel,btnMenuOk;
     private ListView menuDetail;
     private OrderInvoiceAdapter adapter;
+    private String branch_No,dek_No;
+    private List<OrderInvoiceVO> orderList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +40,12 @@ public class OrderAddActivity extends AppCompatActivity {
         menuDetail = findViewById(R.id.MenuDetail);
 
         Bundle bundle = this.getIntent().getExtras();
-        String dek_Id = bundle.getString("dek_Id");
+        final String dek_Id = bundle.getString("dek_Id");
+        branch_No = bundle.getString("branch_No");
+        dek_No = bundle.getString("dek_No");
         tvDeskNum.setText("桌位"+dek_Id);
 
-        // 加入上下格線
+        // 加入上下格線，初始化orderList
         menuDetail.addHeaderView(new View(this));
         menuDetail.addFooterView(new View(this));
         initOrderList(new ArrayList<OrderInvoiceVO>());
@@ -58,6 +63,10 @@ public class OrderAddActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(OrderAddActivity.this,OrderConfirmActivity.class);
                 Bundle bundle = new Bundle();
+                bundle.putString("dek_Id",dek_Id);
+                bundle.putString("branch_No",branch_No);
+                bundle.putString("dek_No",dek_No);
+                bundle.putSerializable("orderList", (Serializable) orderList);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -84,7 +93,8 @@ public class OrderAddActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int position) {
-            return Integer.parseInt(orderList.get(position).getInvo_No());
+//            return Integer.parseInt(orderList.get(position).getInvo_No());
+            return position;
         }
 
         @Override
@@ -126,16 +136,19 @@ public class OrderAddActivity extends AppCompatActivity {
         }
     }
 
+    // 初始化orderList
     public void initOrderList(List<OrderInvoiceVO> orderList) {
         for(int i=1; i<=5; i++)
-            orderList.add(new OrderInvoiceVO("", ""));
+            orderList.add(new OrderInvoiceVO("", "","",null));
+        this.orderList = orderList;
         adapter = new OrderInvoiceAdapter(this,orderList);
         menuDetail.setAdapter(adapter);
     }
 
 
-    //刷新orderList
+    // 刷新orderList
     public void setOrderList(List<OrderInvoiceVO> orderList) {
+        this.orderList = orderList;
         adapter = new OrderInvoiceAdapter(this,orderList);
         menuDetail.setAdapter(adapter);
     }

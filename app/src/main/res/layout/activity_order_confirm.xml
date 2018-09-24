@@ -8,7 +8,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center">
 
         <TextView
             android:id="@+id/tvDeskNum"
@@ -16,56 +17,73 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:textSize="32sp"
+            android:textColor="@color/colorBlack"
             android:text="@string/DeskNum"/>
 
         <TextView
             android:id="@+id/tvTotalAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
             android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@+id/tvDeskNum"
             android:textSize="32sp"
+            android:textColor="@color/colorBlack"
             android:text="@string/TotalAmount"/>
 
     </RelativeLayout>
 
     <LinearLayout
+        android:background="@color/colorYellow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp">
+        android:layout_marginTop="15dp"
+        android:gravity="center">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:gravity="center"
             android:textSize="16sp"
-            android:text="項次"/>
+            android:text="項次"
+            android:textColor="@color/colorRed"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:gravity="center"
             android:textSize="16sp"
-            android:text="餐點名稱"/>
+            android:text="餐點編號"
+            android:textColor="@color/colorRed"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:gravity="center"
             android:textSize="16sp"
-            android:text="金額"/>
+            android:text="餐點名稱"
+            android:textColor="@color/colorRed"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:gravity="center"
             android:textSize="16sp"
-            android:text="數量"/>
+            android:text="金額"
+            android:textColor="@color/colorRed"/>
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:text="數量"
+            android:textColor="@color/colorRed"/>
 
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/OrderDetail"
+        android:id="@+id/rvOrderDetail"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:scrollbars="vertical"/>

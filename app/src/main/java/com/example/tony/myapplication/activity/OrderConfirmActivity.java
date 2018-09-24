@@ -6,22 +6,44 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tony.myapplication.DeliveryVO;
+import com.example.tony.myapplication.OrderInvoiceVO;
+import com.example.tony.myapplication.OrderformVO;
 import com.example.tony.myapplication.R;
+import com.example.tony.myapplication.fragment.DeliveryFragment;
+import com.example.tony.myapplication.main.Util;
+import com.example.tony.myapplication.task.CommonTask;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import java.util.List;
 
 public class OrderConfirmActivity extends AppCompatActivity {
 
+    private final static String TAG = "OrderConfirmActivity";
+    private RecyclerView rvOrderDetail;
     private ImageView ivQrcode;
-    private TextView tvQrcode;
+    private TextView tvQrcode,tvDeskNum,tvTotalAmount;
     private Button btnMenuModify,btnMenuSubmit;
     private static final String PACKAGE = "com.google.zxing.client.android";
+    private List<OrderInvoiceVO> orderList;
+    private Gson gson = new Gson();
+    private CommonTask orderAddTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +53,29 @@ public class OrderConfirmActivity extends AppCompatActivity {
     }
 
     private void findViews() {
+
+        Bundle bundle = this.getIntent().getExtras();
+        final String dek_Id = bundle.getString("dek_Id");
+        final String branch_No = bundle.getString("branch_No");
+        final String dek_No = bundle.getString("dek_No");
+        orderList = (List<OrderInvoiceVO>) bundle.getSerializable("orderList");
+        final int totalAmount = CalTotalAmount();
+
+        tvDeskNum = findViewById(R.id.tvDeskNum);
+        tvTotalAmount =findViewById(R.id.tvTotalAmount);
         ivQrcode = findViewById(R.id.ivQrcode);
         tvQrcode = findViewById(R.id.tvQrcode);
         btnMenuModify = findViewById(R.id.btnMenuModify);
         btnMenuSubmit = findViewById(R.id.btnMenuSubmit);
+        rvOrderDetail = findViewById(R.id.rvOrderDetail);
+        rvOrderDetail.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        rvOrderDetail.setLayoutManager(layoutManager);
+        rvOrderDetail.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        rvOrderDetail.setAdapter(new OrderAdapter(orderList));
+
+        tvDeskNum.setText("桌位"+dek_Id);
+        tvTotalAmount.setText("$"+Integer.toString(totalAmount));
 
         //切換至掃描qrcode頁面
         ivQrcode.setOnClickListener(new View.OnClickListener() {
@@ -60,13 +101,121 @@ public class OrderConfirmActivity extends AppCompatActivity {
             }
         });
 
-        //訂單確認送出
+//訂單確認送出
         btnMenuSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                if (Util.networkConnected(OrderConfirmActivity.this)) {
+                    String url = Util.URL + "AndroidOrderformServlet";
+
+                    OrderformVO order = new OrderformVO();
+//                    int sum = 0;
+//                    for (OrderBook book : CART) {
+//                        sum += book.getPrice() * book.getQuantity();
+//                    }
+//                    order.setAmount(sum);
+                    order.setDek_no(dek_No);
+                    order.setBranch_no(branch_No);
+                    order.setOrder_type(0);
+                    order.setOrder_price(totalAmount);
+                    order.setOrder_status(1);
+                    order.setOrder_pstatus(1);
+                    order.setOrderList(orderList);
+
+                    String ordStr = gson.toJson(order);
+                    Log.e("ordStr", ordStr);
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("action", "add");
+                    jsonObject.addProperty("order", ordStr);
+                    String jsonOut = jsonObject.toString();
+                    orderAddTask = new CommonTask(url, jsonOut);
+                    OrderformVO successOrder = null;
+                    try {
+                        String result = orderAddTask.execute().get();
+                        successOrder = gson.fromJson(result, OrderformVO.class);
+                    } catch (Exception e) {
+                        Log.e(TAG, e.toString());
+                    }
+
+                    if (successOrder == null) {
+                        Util.showToast(OrderConfirmActivity.this, R.string.msg_FailCreateOrder);
+                    } else {
+                        Intent intent = new Intent(OrderConfirmActivity.this, MainActivity.class);
+                        Bundle bundle = new Bundle();
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
+                }
+
             }
         });
+    }
+
+    private class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
+
+//        private List<DeliveryVO> deliveryList;
+
+        public OrderAdapter(List<OrderInvoiceVO> orderList) {
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            private TextView serialNum,meals_No,meals_Name,meals_Price,meals_Count;
+
+            public ViewHolder(View view) {
+                super(view);
+                serialNum = view.findViewById(R.id.serialNum);
+                meals_No = view.findViewById(R.id.meals_No);
+                meals_Name = view.findViewById(R.id.meals_Name);
+                meals_Price = view.findViewById(R.id.meals_Price);
+                meals_Count = view.findViewById(R.id.meals_Count);
+//                deliv_Status.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
+//                        Bundle bundle = new Bundle();
+//                        intent.putExtras(bundle);
+//                        startActivity(intent);
+//                    }
+//                });
+            }
+        }
+
+        @NonNull
+        @Override
+        public OrderAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.listview_order, parent, false);
+            return new OrderAdapter.ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull OrderAdapter.ViewHolder holder, int position) {
+
+            final OrderInvoiceVO orderInvoiceVO = orderList.get(position);
+
+            holder.serialNum.setText(Integer.toString(position+1));
+            holder.meals_No.setText(orderInvoiceVO.getMenu_No());
+            holder.meals_Name.setText(orderInvoiceVO.getMenu_Id());
+            if(orderInvoiceVO.getMenu_Price() != null)
+                holder.meals_Price.setText("$"+Integer.toString(orderInvoiceVO.getMenu_Price()));
+            holder.meals_Count.setText(Integer.toString(CalQuantity()));
+//            holder.deliv_Status.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("delivNo",delivery.getDeliv_no());
+//                    bundle.putString("empNo",delivery.getEmp_no());
+//                    intent.putExtras(bundle);
+//                    startActivity(intent);
+//                }
+//            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return orderList.size();
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -109,4 +258,19 @@ public class OrderConfirmActivity extends AppCompatActivity {
         downloadDialog.show();
     }
 
+    private int CalQuantity() {
+        return 1;
+    }
+
+    private int CalTotalAmount() {
+        int totalAmount = 0;
+        try {
+            for(OrderInvoiceVO oi : orderList) {
+                totalAmount += oi.getMenu_Price();
+            }
+        } catch (NullPointerException ne) {
+            ne.printStackTrace();
+        }
+        return  totalAmount;
+    }
 }

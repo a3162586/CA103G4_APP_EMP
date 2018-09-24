@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/serialNum"
+        android:text="項次"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/meals_No"
+        android:text="餐點編號"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/meals_Name"
+        android:text="餐點名稱"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/meals_Price"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/meals_Count"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+
+</LinearLayout>
