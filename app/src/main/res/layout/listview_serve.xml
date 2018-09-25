@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp"
+    android:gravity="center" >
+
+    <TextView
+        android:id="@+id/deliv_No"
+        android:text="派送單編號"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/branch_No"
+        android:text="分店編號"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/emp_No"
+        android:text="員工編號"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/deliv_Status"
+        android:text="派送狀態"
+        android:layout_width="80dp"
+        android:layout_height="36dp" />
+
+
+</LinearLayout>

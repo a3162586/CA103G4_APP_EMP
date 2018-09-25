@@ -7,9 +7,9 @@
 
     <GridView
         android:id="@+id/gvTable"
-        android:background="@color/colorLightYellow"
-        android:horizontalSpacing="1dp"
-        android:verticalSpacing="1dp"
+        android:background="@color/colorWhite"
+        android:horizontalSpacing="6dp"
+        android:verticalSpacing="6dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:columnWidth="100dp"

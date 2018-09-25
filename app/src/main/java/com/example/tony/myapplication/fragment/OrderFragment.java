@@ -136,7 +136,7 @@ public class OrderFragment extends Fragment {
             switch (desk.getDek_status()) {
                 case 0:
                     holder.tvTableStatus.setText("空桌");
-                    holder.tvTableNo.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+                    holder.tvTableNo.setBackgroundColor(getResources().getColor(R.color.colorGreen));
                     break;
                 case 1:
                     holder.tvTableStatus.setText("使用中");

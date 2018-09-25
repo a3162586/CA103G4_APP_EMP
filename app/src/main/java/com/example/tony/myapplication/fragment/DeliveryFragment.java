@@ -17,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.tony.myapplication.DeliveryVO;
 import com.example.tony.myapplication.R;
@@ -38,7 +37,6 @@ public class DeliveryFragment extends Fragment {
     private RecyclerView rvDelivery;
     private Spinner spDeliverySearchMode,spDeliverySearchOption;
     private final static String TAG = "DeliveryFragment";
-//    private View view;
     private CommonTask getDeliveryTask;
     private List<DeliveryVO> deliveryList = null;
 
