@@ -41,7 +41,7 @@
                 android:layout_width="70dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
 
 
         </LinearLayout>
@@ -66,7 +66,7 @@
             <TextView
                 android:id="@+id/textView2"
                 android:textColor="@color/colorRed"
-                android:layout_width="60dp"
+                android:layout_width="110dp"
                 android:layout_height="wrap_content"
                 android:text="餐點名稱"
                 android:gravity="center"/>
@@ -74,7 +74,7 @@
             <TextView
                 android:id="@+id/textView3"
                 android:textColor="@color/colorRed"
-                android:layout_width="100dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:text="金額"
                 android:gravity="center"/>
@@ -82,9 +82,9 @@
             <TextView
                 android:id="@+id/textView4"
                 android:textColor="@color/colorRed"
-                android:layout_width="80dp"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
-                android:text="已出餐"
+                android:text="確認出餐"
                 android:gravity="center"/>
 
         </LinearLayout>

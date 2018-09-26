@@ -14,11 +14,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.tony.myapplication.DeskVO;
-import com.example.tony.myapplication.OrderInvoiceVO;
 import com.example.tony.myapplication.OrderInvoiceWithMenuVO;
 import com.example.tony.myapplication.R;
 import com.example.tony.myapplication.main.Util;
@@ -33,12 +35,16 @@ import java.util.List;
 
 public class ServeFragment extends Fragment {
 
+    private Button serveUpdate;
     private RecyclerView rvServe;
     private Spinner spServeDeskSearch;
     private final static String TAG = "ServeFragment";
     private CommonTask getServeTask;
-    private List<OrderInvoiceVO> orderInvoiceList = null;
+    private List<OrderInvoiceWithMenuVO> serveList = null;
     private List<DeskVO> deskList = null;
+    private List<String> updateStatusList = new ArrayList<>();
+    private Gson gson = new Gson();
+    private int itemPosition = 0;
 
     public ServeFragment() {
         // Required empty public constructor
@@ -60,6 +66,26 @@ public class ServeFragment extends Fragment {
         rvServe.setLayoutManager(layoutManager);
         rvServe.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         spServeDeskSearch = view.findViewById(R.id.spServeDeskSearch);
+        serveUpdate = view.findViewById(R.id.serveUpdate);
+        serveUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String updateStatusListStr = gson.toJson(updateStatusList);
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("action", "updateInvoStatus");
+                jsonObject.addProperty("updateStatusList", updateStatusListStr);
+                String jsonOut = jsonObject.toString();
+                updateInvoStatus(jsonOut);
+
+                JsonObject jsonObject2 = new JsonObject();
+                jsonObject2.addProperty("action", "getOrderNoByDekNoAndOrderStatus");
+                jsonObject2.addProperty("dekNo", deskList.get(itemPosition).getDek_no());
+                jsonObject2.addProperty("orderStatus", "1");
+                String jsonOut2 = jsonObject2.toString();
+                updateUI(jsonOut2);
+            }
+        });
+
 
         // check if the device connect to the network
         if (Util.networkConnected(getActivity())) {
@@ -115,6 +141,7 @@ public class ServeFragment extends Fragment {
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("action", "getOrderNoByDekNoAndOrderStatus");
                     jsonObject.addProperty("dekNo", deskList.get(i-1).getDek_no());
+                    itemPosition = i-1;
                     jsonObject.addProperty("orderStatus", "1");
                     String jsonOut = jsonObject.toString();
                     updateUI(jsonOut);
@@ -141,24 +168,15 @@ public class ServeFragment extends Fragment {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            private TextView deliv_No,branch_No,emp_No;
-            private Button deliv_Status;
+            private TextView order_No,menu_Name,menu_Price;
+            private CheckBox serveCheck;
 
             public ViewHolder(View view) {
                 super(view);
-                deliv_No = view.findViewById(R.id.deliv_No);
-                branch_No = view.findViewById(R.id.branch_No);
-                emp_No = view.findViewById(R.id.emp_No);
-                deliv_Status = view.findViewById(R.id.deliv_Status);
-//                deliv_Status.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
-//                        Bundle bundle = new Bundle();
-//                        intent.putExtras(bundle);
-//                        startActivity(intent);
-//                    }
-//                });
+                order_No = view.findViewById(R.id.order_No);
+                menu_Name = view.findViewById(R.id.menu_Name);
+                menu_Price = view.findViewById(R.id.menu_Price);
+                serveCheck = view.findViewById(R.id.serveCheck);
             }
         }
 
@@ -170,25 +188,24 @@ public class ServeFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ServeFragment.ServeAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final ServeFragment.ServeAdapter.ViewHolder holder, final int position) {
 
             final OrderInvoiceWithMenuVO orderInvoiceWithMenuVO = serveList.get(position);
 
-            holder.deliv_No.setText(orderInvoiceWithMenuVO.getOrder_no());
-            holder.branch_No.setText(orderInvoiceWithMenuVO.getMenuVO().getMenu_Id());
-            holder.emp_No.setText("$" + orderInvoiceWithMenuVO.getMenuVO().getMenu_Price());
-            holder.deliv_Status.setText("test");
-            holder.deliv_Status.setOnClickListener(new View.OnClickListener() {
+            holder.order_No.setText(orderInvoiceWithMenuVO.getOrder_no());
+            holder.menu_Name.setText(orderInvoiceWithMenuVO.getMenuVO().getMenu_Id());
+            holder.menu_Price.setText("$" + orderInvoiceWithMenuVO.getMenuVO().getMenu_Price());
+            CheckBox.OnCheckedChangeListener chklistener = new CheckBox.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View view) {
-//                    Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("delivNo",delivery.getDeliv_no());
-//                    bundle.putString("empNo",delivery.getEmp_no());
-//                    intent.putExtras(bundle);
-//                    startActivity(intent);
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    if(holder.serveCheck.isChecked())
+                        updateStatusList.add(orderInvoiceWithMenuVO.getInvo_no());
+                    else
+                        updateStatusList.remove(orderInvoiceWithMenuVO.getInvo_no());
                 }
-            });
+            };
+            holder.serveCheck.setOnCheckedChangeListener(chklistener);
+
         }
 
         @Override
@@ -199,7 +216,6 @@ public class ServeFragment extends Fragment {
 
     private void updateUI(String jsonOut) {
         getServeTask = new CommonTask(Util.URL + "AndroidOrderformServlet", jsonOut);
-        List<OrderInvoiceWithMenuVO> serveList = null;
         try {
             String jsonIn = getServeTask.execute().get();
             Type listType = new TypeToken<List<OrderInvoiceWithMenuVO>>() {
@@ -212,6 +228,24 @@ public class ServeFragment extends Fragment {
             Util.showToast(getActivity(), R.string.msg_DeskNotFound);
         } else {
             rvServe.setAdapter(new ServeFragment.ServeAdapter(serveList));
+        }
+    }
+
+    private void updateInvoStatus(String jsonOut) {
+        getServeTask = new CommonTask(Util.URL + "AndroidOrderformServlet", jsonOut);
+        String resultCheck = null;
+        try {
+            String jsonIn = getServeTask.execute().get();
+            Type type = new TypeToken<String>() {
+            }.getType();
+            resultCheck = new Gson().fromJson(jsonIn, type);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+        if (resultCheck == null || resultCheck.isEmpty()) {
+            Util.showToast(getActivity(), R.string.msg_DeskNotFound);
+        } else {
+            Toast.makeText(getActivity(), "出餐狀態更新成功!", Toast.LENGTH_SHORT).show();
         }
     }
 
