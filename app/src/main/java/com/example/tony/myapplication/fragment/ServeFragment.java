@@ -1,7 +1,6 @@
 package com.example.tony.myapplication.fragment;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -18,11 +17,10 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.tony.myapplication.DeliveryVO;
 import com.example.tony.myapplication.DeskVO;
 import com.example.tony.myapplication.OrderInvoiceVO;
+import com.example.tony.myapplication.OrderInvoiceWithMenuVO;
 import com.example.tony.myapplication.R;
-import com.example.tony.myapplication.activity.DeliveryDetailActivity;
 import com.example.tony.myapplication.main.Util;
 import com.example.tony.myapplication.task.CommonTask;
 import com.google.gson.Gson;
@@ -31,9 +29,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ServeFragment extends Fragment {
 
@@ -95,6 +91,7 @@ public class ServeFragment extends Fragment {
         }
 
         List<String> list = new ArrayList<>();
+        list.add("請選擇...");
         ArrayAdapter<String> adapter;
 
         for(DeskVO deskVO : deskList) {
@@ -113,12 +110,15 @@ public class ServeFragment extends Fragment {
         spServeDeskSearch.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                String serveDeskSearch = spServeDeskSearch.getSelectedItem().toString();
-//                JsonObject jsonObject = new JsonObject();
-//                jsonObject.addProperty("action", "getEmpNo");
-//                jsonObject.addProperty("emp_no", searchOption);
-//                String jsonOut = jsonObject.toString();
-//                updateUI(jsonOut);
+                String defaultOption = spServeDeskSearch.getSelectedItem().toString();
+                if(!"請選擇...".equals(defaultOption)) {
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("action", "getOrderNoByDekNoAndOrderStatus");
+                    jsonObject.addProperty("dekNo", deskList.get(i-1).getDek_no());
+                    jsonObject.addProperty("orderStatus", "1");
+                    String jsonOut = jsonObject.toString();
+                    updateUI(jsonOut);
+                }
             }
 
             @Override
@@ -134,10 +134,10 @@ public class ServeFragment extends Fragment {
 
     private class ServeAdapter extends RecyclerView.Adapter<ServeFragment.ServeAdapter.ViewHolder> {
 
-        private List<DeliveryVO> deliveryList;
+        private List<OrderInvoiceWithMenuVO> serveList;
 
-        public ServeAdapter(List<DeliveryVO> deliveryList) {
-            this.deliveryList = deliveryList;
+        public ServeAdapter(List<OrderInvoiceWithMenuVO> serveList) {
+            this.serveList = serveList;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -172,46 +172,46 @@ public class ServeFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull ServeFragment.ServeAdapter.ViewHolder holder, int position) {
 
-            final DeliveryVO delivery = deliveryList.get(position);
+            final OrderInvoiceWithMenuVO orderInvoiceWithMenuVO = serveList.get(position);
 
-            holder.deliv_No.setText(delivery.getDeliv_no());
-            holder.branch_No.setText(delivery.getBranch_no());
-            holder.emp_No.setText(delivery.getEmp_no());
-            holder.deliv_Status.setText(status);
+            holder.deliv_No.setText(orderInvoiceWithMenuVO.getOrder_no());
+            holder.branch_No.setText(orderInvoiceWithMenuVO.getMenuVO().getMenu_Id());
+            holder.emp_No.setText("$" + orderInvoiceWithMenuVO.getMenuVO().getMenu_Price());
+            holder.deliv_Status.setText("test");
             holder.deliv_Status.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("delivNo",delivery.getDeliv_no());
-                    bundle.putString("empNo",delivery.getEmp_no());
-                    intent.putExtras(bundle);
-                    startActivity(intent);
+//                    Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("delivNo",delivery.getDeliv_no());
+//                    bundle.putString("empNo",delivery.getEmp_no());
+//                    intent.putExtras(bundle);
+//                    startActivity(intent);
                 }
             });
         }
 
         @Override
         public int getItemCount() {
-            return deliveryList.size();
+            return serveList.size();
         }
     }
 
     private void updateUI(String jsonOut) {
-        getServeTask = new CommonTask(Util.URL + "AndroidDeliveryServlet", jsonOut);
-        List<DeliveryVO> deliveryList = null;
+        getServeTask = new CommonTask(Util.URL + "AndroidOrderformServlet", jsonOut);
+        List<OrderInvoiceWithMenuVO> serveList = null;
         try {
             String jsonIn = getServeTask.execute().get();
-            Type listType = new TypeToken<List<DeliveryVO>>() {
+            Type listType = new TypeToken<List<OrderInvoiceWithMenuVO>>() {
             }.getType();
-            deliveryList = new Gson().fromJson(jsonIn, listType);
+            serveList = new Gson().fromJson(jsonIn, listType);
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
-        if (deliveryList == null || deliveryList.isEmpty()) {
+        if (serveList == null || serveList.isEmpty()) {
             Util.showToast(getActivity(), R.string.msg_DeskNotFound);
         } else {
-            rvServe.setAdapter(new ServeFragment.ServeAdapter(deliveryList));
+            rvServe.setAdapter(new ServeFragment.ServeAdapter(serveList));
         }
     }
 

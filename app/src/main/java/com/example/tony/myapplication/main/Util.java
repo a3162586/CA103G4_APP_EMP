@@ -12,8 +12,8 @@ import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 
 public class Util {
-    public final static String URL = "http://192.168.1.102:8081/CA103G4/";
-//    public final static String URL = "http://10.0.2.2:8081/CA103G4/";
+//    public final static String URL = "http://192.168.1.102:8081/CA103G4/";
+    public final static String URL = "http://10.0.2.2:8081/CA103G4/";
 
     // 偏好設定檔案名稱
     public final static String PREF_FILE = "preference";

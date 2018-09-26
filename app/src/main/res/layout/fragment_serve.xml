@@ -60,7 +60,7 @@
                 android:textColor="@color/colorRed"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="派送單編號"
+                android:text="訂單編號"
                 android:gravity="center"/>
 
             <TextView
@@ -68,7 +68,7 @@
                 android:textColor="@color/colorRed"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:text="分店編號"
+                android:text="餐點名稱"
                 android:gravity="center"/>
 
             <TextView
@@ -76,7 +76,7 @@
                 android:textColor="@color/colorRed"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="員工編號"
+                android:text="金額"
                 android:gravity="center"/>
 
             <TextView
@@ -84,7 +84,7 @@
                 android:textColor="@color/colorRed"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
-                android:text="派送單狀態"
+                android:text="已出餐"
                 android:gravity="center"/>
 
         </LinearLayout>
