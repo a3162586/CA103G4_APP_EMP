@@ -7,7 +7,7 @@
     android:layout_height="150dp"
     android:orientation="horizontal"
     android:layout_margin="5dp"
-    card_view:cardBackgroundColor="#ddbdff"
+    card_view:cardBackgroundColor="@color/colorLightYellow"
     card_view:cardCornerRadius="5dp">
 
     <RelativeLayout
@@ -17,16 +17,53 @@
 
         <TextView
             android:id="@+id/order_No"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Order_No"/>
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:text="Order_No"
+            android:textColor="@color/colorBlack"/>
+
+        <TextView
+            android:id="@+id/order_Price"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/order_No"
+            android:text="Order_Price"
+            android:textColor="@color/colorBlack"/>
+
         <TextView
             android:id="@+id/delivery_Address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/order_Price"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Address"
+            android:textColor="@color/colorBlack"/>
+
+        <TextView
+            android:id="@+id/mem_No"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/order_No"
+            android:text="mem_No"
+            android:textColor="@color/colorBlack"/>
+
+        <TextView
+            android:id="@+id/mem_Name"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mem_No"
+            android:layout_toRightOf="@+id/order_Price"
+            android:text="mem_Name"
+            android:textColor="@color/colorBlack"/>
+
+        <TextView
+            android:id="@+id/mem_Id"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingLeft="10dp"
-            android:layout_centerHorizontal="true"
-            android:text="Address"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/delivery_Address"
+            android:text="menu_Id"
+            android:textColor="@color/colorBlack"/>
 
     </RelativeLayout>
 

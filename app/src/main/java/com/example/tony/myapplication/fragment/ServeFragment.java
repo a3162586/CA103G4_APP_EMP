@@ -70,19 +70,21 @@ public class ServeFragment extends Fragment {
         serveUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String updateStatusListStr = gson.toJson(updateStatusList);
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("action", "updateInvoStatus");
-                jsonObject.addProperty("updateStatusList", updateStatusListStr);
-                String jsonOut = jsonObject.toString();
-                updateInvoStatus(jsonOut);
+                if(serveList != null) {
+                    String updateStatusListStr = gson.toJson(updateStatusList);
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("action", "updateInvoStatus");
+                    jsonObject.addProperty("updateStatusList", updateStatusListStr);
+                    String jsonOut = jsonObject.toString();
+                    updateInvoStatus(jsonOut);
 
-                JsonObject jsonObject2 = new JsonObject();
-                jsonObject2.addProperty("action", "getOrderNoByDekNoAndOrderStatus");
-                jsonObject2.addProperty("dekNo", deskList.get(itemPosition).getDek_no());
-                jsonObject2.addProperty("orderStatus", "1");
-                String jsonOut2 = jsonObject2.toString();
-                updateUI(jsonOut2);
+                    JsonObject jsonObject2 = new JsonObject();
+                    jsonObject2.addProperty("action", "getOrderNoByDekNoAndOrderStatus");
+                    jsonObject2.addProperty("dekNo", deskList.get(itemPosition).getDek_no());
+                    jsonObject2.addProperty("orderStatus", "1");
+                    String jsonOut2 = jsonObject2.toString();
+                    updateUI(jsonOut2);
+                }
             }
         });
 

@@ -28,7 +28,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/ivMenu_Photo"
             android:paddingLeft="10dp"
-            android:text="餐點名稱" />
+            android:text="餐點名稱"
+            android:textColor="@color/colorBlack"/>
         <TextView
             android:id="@+id/tvMenu_Price"
             android:layout_width="wrap_content"
@@ -36,7 +37,8 @@
             android:layout_toRightOf="@+id/ivMenu_Photo"
             android:paddingLeft="10dp"
             android:layout_alignParentBottom="true"
-            android:text="價格"/>
+            android:text="價格"
+            android:textColor="@color/colorBlack"/>
         <Button
             android:id="@+id/btnMenuAdd"
             android:layout_width="45dp"

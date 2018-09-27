@@ -23,7 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tony.myapplication.AddressVO;
-import com.example.tony.myapplication.DeliveryVO;
+import com.example.tony.myapplication.OrderInvoiceVO;
+import com.example.tony.myapplication.OrderInvoiceWithMenuVO;
+import com.example.tony.myapplication.OrderformVO;
 import com.example.tony.myapplication.R;
 import com.example.tony.myapplication.main.Util;
 import com.example.tony.myapplication.task.CommonTask;
@@ -34,6 +36,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
@@ -64,6 +67,7 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     private GoogleApiClient googleApiClient;
     private Location location;
+    private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
     private List<AddressVO> list = new ArrayList<>();
 
@@ -76,9 +80,9 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
 
         // 取得上個頁面傳入的派送單編號、員工編號資料
         Bundle bundle = this.getIntent().getExtras();
-        String DelivNo = bundle.getString("delivNo");
+        String delivNo = bundle.getString("delivNo");
         String empNo = bundle.getString("empNo");
-        tvDelivNo.setText(DelivNo);
+        tvDelivNo.setText(delivNo);
         tvEmpName.setText(empNo);
 
         // check if the device connect to the network
@@ -86,25 +90,26 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
 
             //宣告JasonObject物件，利用getDeliveryTask非同步任務連線到Servlet的 if ("getAll".equals(action))
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "getAll");
+            jsonObject.addProperty("action", "getOrderByDelivNo");
+            jsonObject.addProperty("delivNo", delivNo);
             String jsonOut = jsonObject.toString();
-            getDeliveryTask = new CommonTask(Util.URL + "AndroidDeliveryServlet", jsonOut);
+            getDeliveryTask = new CommonTask(Util.URL + "AndroidOrderformServlet", jsonOut);
 
-            List<DeliveryVO> deliveryList = null;
+            List<OrderformVO> orderList = null;
             try {
 
                 //將getDeliveryTask回傳的result重新轉型回List<DeliveryVO>物件
                 String jsonIn = getDeliveryTask.execute().get();
-                Type listType = new TypeToken<List<DeliveryVO>>() {
+                Type listType = new TypeToken<List<OrderformVO>>() {
                 }.getType();
-                deliveryList = new Gson().fromJson(jsonIn, listType);
+                orderList = gson.fromJson(jsonIn, listType);
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
             }
-            if (deliveryList == null || deliveryList.isEmpty()) {
+            if (orderList == null || orderList.isEmpty()) {
                 Util.showToast(this, R.string.msg_DeliveryNotFound);
             } else {
-                showResult(deliveryList);
+                showResult(orderList);
             }
 
         } else {
@@ -283,19 +288,23 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
 
     private class DeliveryAdapter extends RecyclerView.Adapter<DeliveryDetailActivity.DeliveryAdapter.ViewHolder> {
 
-        private List<DeliveryVO> deliveryList;
+        private List<OrderformVO> orderList;
 
-        public DeliveryAdapter(List<DeliveryVO> deliveryList) {
-            this.deliveryList = deliveryList;
+        public DeliveryAdapter(List<OrderformVO> orderList) {
+            this.orderList = orderList;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            private TextView order_No,delivery_Address;
+            private TextView order_No,order_Price,delivery_Address,mem_No,mem_Name,mem_Id;
 
             public ViewHolder(View view) {
                 super(view);
                 order_No = view.findViewById(R.id.order_No);
+                order_Price = view.findViewById(R.id.order_Price);
                 delivery_Address = view.findViewById(R.id.delivery_Address);
+                mem_No = view.findViewById(R.id.mem_No);
+                mem_Name = view.findViewById(R.id.mem_Name);
+                mem_Id = view.findViewById(R.id.mem_Id);
             }
         }
 
@@ -309,19 +318,39 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
         @Override
         public void onBindViewHolder(@NonNull DeliveryDetailActivity.DeliveryAdapter.ViewHolder holder, int position) {
 
-            final DeliveryVO delivery = deliveryList.get(position);
-            holder.order_No.setText(delivery.getDeliv_no());
-            holder.delivery_Address.setText(delivery.getEmp_no());
+            final OrderformVO order = orderList.get(position);
+            holder.order_No.setText("訂單單號 : "+order.getOrder_no());
+            holder.order_Price.setText("餐點金額 : $"+Integer.toString(order.getOrder_price()));
+            holder.delivery_Address.setText("送餐地址 : "+order.getDeliv_addres());
+            holder.mem_No.setText("會員編號 : "+order.getMem_no());
+            holder.mem_Name.setText("會員名稱 : "+order.getMemVO().getMem_Name());
+
+            List<OrderInvoiceWithMenuVO> orderInvoiceList;
+            StringBuilder memIdStr = new StringBuilder();
+            int count = 0;
+            try {
+                orderInvoiceList = order.getOrderList2();
+                for(OrderInvoiceWithMenuVO oiwmVO : orderInvoiceList) {
+                    if(count==0)
+                        memIdStr.append("訂購餐點 : "+oiwmVO.getMenuVO().getMenu_Id()+"  X 1"+"\n");
+                    else
+                        memIdStr.append("　　　　   "+oiwmVO.getMenuVO().getMenu_Id()+"  X 1"+"\n");
+                    count++;
+                }
+                holder.mem_Id.setText(memIdStr);
+            } catch (Exception e) {
+                holder.mem_Id.setText("mem_Id");
+            }
 
         }
 
         @Override
         public int getItemCount() {
-            return deliveryList.size();
+            return orderList.size();
         }
     }
 
-    public void showResult(List<DeliveryVO> result) {
+    public void showResult(List<OrderformVO> result) {
 
         rvOrderDetail = findViewById(R.id.rvOrderDetail);
         rvOrderDetail.setHasFixedSize(true);
@@ -363,7 +392,7 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
     }
 
     public void initAddress() {
-        list.add(new AddressVO("桃園市桃園區慈華街24巷5號"));
+        list.add(new AddressVO("桃園市桃園區同德十一路88號"));
         list.add(new AddressVO("桃園市桃園區寶慶路47號"));
         list.add(new AddressVO("桃園市中壢區中和路102號"));
     }

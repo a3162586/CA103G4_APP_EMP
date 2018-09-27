@@ -10,6 +10,7 @@
     <TextView
         android:id="@+id/serialNum"
         android:text="項次"
+        android:textColor="@color/colorBlack"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:gravity="center"/>
@@ -17,6 +18,7 @@
     <TextView
         android:id="@+id/meals_No"
         android:text="餐點編號"
+        android:textColor="@color/colorBlack"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:gravity="center"/>
@@ -24,18 +26,21 @@
     <TextView
         android:id="@+id/meals_Name"
         android:text="餐點名稱"
+        android:textColor="@color/colorBlack"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:gravity="center"/>
 
     <TextView
         android:id="@+id/meals_Price"
+        android:textColor="@color/colorBlack"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:gravity="center" />
 
     <TextView
         android:id="@+id/meals_Count"
+        android:textColor="@color/colorBlack"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:gravity="center" />

@@ -22,6 +22,7 @@
 
         <LinearLayout
             android:id="@+id/linearLayout1"
+            android:background="@color/colorLightYellow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -36,7 +37,7 @@
 
             <Spinner
                 android:id="@+id/spDeliverySearchOption"
-                android:layout_width="200dp"
+                android:layout_width="190dp"
                 android:layout_height="wrap_content"
                 android:spinnerMode="dropdown" />
 

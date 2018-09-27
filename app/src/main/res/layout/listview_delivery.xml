@@ -10,6 +10,7 @@
     <TextView
         android:id="@+id/deliv_No"
         android:text="派送單編號"
+        android:textColor="@color/colorBlack"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:gravity="center"/>
@@ -17,6 +18,7 @@
     <TextView
         android:id="@+id/branch_No"
         android:text="分店編號"
+        android:textColor="@color/colorBlack"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:gravity="center"/>
@@ -24,6 +26,7 @@
     <TextView
         android:id="@+id/emp_No"
         android:text="員工編號"
+        android:textColor="@color/colorBlack"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:gravity="center"/>
@@ -31,6 +34,7 @@
     <Button
         android:id="@+id/deliv_Status"
         android:text="派送狀態"
+        android:textColor="@color/colorBlack"
         android:layout_width="80dp"
         android:layout_height="36dp" />
 

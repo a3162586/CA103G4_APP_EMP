@@ -15,6 +15,23 @@ public class OrderformVO {
     private Integer order_pstatus;
 
     private List<OrderInvoiceVO> orderList;
+    private MemberVO memVO;
+
+    private List<OrderInvoiceWithMenuVO> orderList2;
+
+    public List<OrderInvoiceWithMenuVO> getOrderList2() {
+        return orderList2;
+    }
+    public void setOrderList2(List<OrderInvoiceWithMenuVO> orderList2) {
+        this.orderList2 = orderList2;
+    }
+
+    public MemberVO getMemVO() {
+        return memVO;
+    }
+    public void setMemVO(MemberVO memVO) {
+        this.memVO = memVO;
+    }
 
     public List<OrderInvoiceVO> getOrderList() {
         return orderList;
