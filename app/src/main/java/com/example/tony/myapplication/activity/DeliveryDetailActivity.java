@@ -57,7 +57,6 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
     private RecyclerView rvOrderDetail;
     private TextView tvDelivNo,tvEmpName;
     private final static String TAG = "DeliveryDetailActivity";
-//    private View view;
     private CommonTask getDeliveryTask;
 
     private static final int MY_REQUEST_CODE = 0;
@@ -75,6 +74,7 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
         tvDelivNo = findViewById(R.id.tvDelivNo);
         tvEmpName = findViewById(R.id.tvEmpName);
 
+        // 取得上個頁面傳入的派送單編號、員工編號資料
         Bundle bundle = this.getIntent().getExtras();
         String DelivNo = bundle.getString("delivNo");
         String empNo = bundle.getString("empNo");
@@ -166,7 +166,6 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
         StringBuilder sb = new StringBuilder();
         float[] results = new float[1];
         Map<Float, String> map = new TreeMap<>();
-//        int count = 0;
 
         // 取得自己位置的緯經度
         sb.append(location.getLatitude()+","+location.getLongitude()+"/");

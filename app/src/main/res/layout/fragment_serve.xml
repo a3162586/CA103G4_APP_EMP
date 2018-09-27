@@ -43,7 +43,6 @@
                 android:layout_marginLeft="20dp"
                 android:layout_gravity="center" />
 
-
         </LinearLayout>
 
         <LinearLayout
@@ -88,7 +87,6 @@
                 android:gravity="center"/>
 
         </LinearLayout>
-
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvServe"

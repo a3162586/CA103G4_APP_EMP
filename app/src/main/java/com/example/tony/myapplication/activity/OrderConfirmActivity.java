@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -21,11 +20,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.tony.myapplication.DeliveryVO;
 import com.example.tony.myapplication.OrderInvoiceVO;
 import com.example.tony.myapplication.OrderformVO;
 import com.example.tony.myapplication.R;
-import com.example.tony.myapplication.fragment.DeliveryFragment;
 import com.example.tony.myapplication.main.Util;
 import com.example.tony.myapplication.task.CommonTask;
 import com.google.gson.Gson;
@@ -54,11 +51,14 @@ public class OrderConfirmActivity extends AppCompatActivity {
 
     private void findViews() {
 
+        // 取得上個頁面傳入的桌位編號、分店編號、桌位流水號、餐點明細List資料
         Bundle bundle = this.getIntent().getExtras();
         final String dek_Id = bundle.getString("dek_Id");
         final String branch_No = bundle.getString("branch_No");
         final String dek_No = bundle.getString("dek_No");
         orderList = (List<OrderInvoiceVO>) bundle.getSerializable("orderList");
+
+        // 計算訂單總金額
         final int totalAmount = CalTotalAmount();
 
         tvDeskNum = findViewById(R.id.tvDeskNum);
@@ -68,16 +68,20 @@ public class OrderConfirmActivity extends AppCompatActivity {
         btnMenuModify = findViewById(R.id.btnMenuModify);
         btnMenuSubmit = findViewById(R.id.btnMenuSubmit);
         rvOrderDetail = findViewById(R.id.rvOrderDetail);
+
         rvOrderDetail.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         rvOrderDetail.setLayoutManager(layoutManager);
+
+        // 設定分隔線樣式
         rvOrderDetail.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
         rvOrderDetail.setAdapter(new OrderAdapter(orderList));
 
         tvDeskNum.setText("桌位"+dek_Id);
         tvTotalAmount.setText("$"+Integer.toString(totalAmount));
 
-        //切換至掃描qrcode頁面
+        // 切換至掃描qrcode頁面
         ivQrcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,7 +97,7 @@ public class OrderConfirmActivity extends AppCompatActivity {
             }
         });
 
-        //返回上一頁
+        // 返回上一頁
         btnMenuModify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,7 +105,7 @@ public class OrderConfirmActivity extends AppCompatActivity {
             }
         });
 
-//訂單確認送出
+        // 訂單確認送出
         btnMenuSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,6 +127,7 @@ public class OrderConfirmActivity extends AppCompatActivity {
                     order.setOrder_pstatus(1);
                     order.setOrderList(orderList);
 
+                    // 宣告JasonObject物件，利用orderAddTask非同步任務連線到Servlet的 if ("add".equals(action))
                     String ordStr = gson.toJson(order);
                     Log.e("ordStr", ordStr);
                     JsonObject jsonObject = new JsonObject();
@@ -130,8 +135,12 @@ public class OrderConfirmActivity extends AppCompatActivity {
                     jsonObject.addProperty("order", ordStr);
                     String jsonOut = jsonObject.toString();
                     orderAddTask = new CommonTask(url, jsonOut);
+
+                    // 訂單新增成功會轉換至MainActivity頁面，失敗則show出FailCreateOrder訊息
                     OrderformVO successOrder = null;
                     try {
+
+                        // 回傳的Json字串以OrderformVO格式解析
                         String result = orderAddTask.execute().get();
                         successOrder = gson.fromJson(result, OrderformVO.class);
                     } catch (Exception e) {
@@ -154,30 +163,19 @@ public class OrderConfirmActivity extends AppCompatActivity {
 
     private class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
-//        private List<DeliveryVO> deliveryList;
-
-        public OrderAdapter(List<OrderInvoiceVO> orderList) {
+        OrderAdapter(List<OrderInvoiceVO> orderList) {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
             private TextView serialNum,meals_No,meals_Name,meals_Price,meals_Count;
 
-            public ViewHolder(View view) {
+            ViewHolder(View view) {
                 super(view);
                 serialNum = view.findViewById(R.id.serialNum);
                 meals_No = view.findViewById(R.id.meals_No);
                 meals_Name = view.findViewById(R.id.meals_Name);
                 meals_Price = view.findViewById(R.id.meals_Price);
                 meals_Count = view.findViewById(R.id.meals_Count);
-//                deliv_Status.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
-//                        Bundle bundle = new Bundle();
-//                        intent.putExtras(bundle);
-//                        startActivity(intent);
-//                    }
-//                });
             }
         }
 
@@ -199,17 +197,6 @@ public class OrderConfirmActivity extends AppCompatActivity {
             if(orderInvoiceVO.getMenu_Price() != null)
                 holder.meals_Price.setText("$"+Integer.toString(orderInvoiceVO.getMenu_Price()));
             holder.meals_Count.setText(Integer.toString(CalQuantity()));
-//            holder.deliv_Status.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("delivNo",delivery.getDeliv_no());
-//                    bundle.putString("empNo",delivery.getEmp_no());
-//                    intent.putExtras(bundle);
-//                    startActivity(intent);
-//                }
-//            });
         }
 
         @Override
@@ -258,10 +245,12 @@ public class OrderConfirmActivity extends AppCompatActivity {
         downloadDialog.show();
     }
 
+    // 計算同類餐點數量
     private int CalQuantity() {
         return 1;
     }
 
+    // 計算訂單總金額
     private int CalTotalAmount() {
         int totalAmount = 0;
         try {
@@ -272,5 +261,13 @@ public class OrderConfirmActivity extends AppCompatActivity {
             ne.printStackTrace();
         }
         return  totalAmount;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (orderAddTask != null) {
+            orderAddTask.cancel(true);
+        }
     }
 }

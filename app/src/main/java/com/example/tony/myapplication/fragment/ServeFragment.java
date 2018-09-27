@@ -249,4 +249,13 @@ public class ServeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        if (getServeTask != null) {
+            getServeTask.cancel(true);
+            getServeTask = null;
+        }
+        super.onPause();
+    }
+
 }

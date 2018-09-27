@@ -44,7 +44,6 @@ public class DeliveryFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,7 +57,10 @@ public class DeliveryFragment extends Fragment {
         rvDelivery.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rvDelivery.setLayoutManager(layoutManager);
+
+        // 設定分隔線樣式
         rvDelivery.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+
         spDeliverySearchMode = view.findViewById(R.id.spDeliverySearchMode);
         spDeliverySearchMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -71,14 +73,19 @@ public class DeliveryFragment extends Fragment {
 
                         for(DeliveryVO deliveryVO : deliveryList) {
                             if(deliveryVO.getEmp_no() != null)
+
+                                // 利用set重複不加入的特性取得deliveryList內所有不重複的員工編號
                                 set.add(deliveryVO.getEmp_no());
                         }
+
+                        // 集合轉陣列
                         String[] empNo = set.toArray(new String[set.size()]);
 
                         // ArrayAdapter用來管理整個選項的內容與樣式，android.R.layout.simple_spinner_item為內建預設樣式
                         adapter = new ArrayAdapter<>
                                 (getActivity(), android.R.layout.simple_spinner_item, empNo);
-//                        // android.R.layout.simple_spinner_dropdown_item為內建下拉選單樣式
+
+                        // android.R.layout.simple_spinner_dropdown_item為內建下拉選單樣式
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spDeliverySearchOption.setAdapter(adapter);
                         spDeliverySearchOption.setSelection(0, true);
@@ -87,12 +94,15 @@ public class DeliveryFragment extends Fragment {
 
                         for(DeliveryVO deliveryVO : deliveryList)
                                 set.add(deliveryVO.getDeliv_no());
+
+                        // 集合轉陣列
                         String[] deliveryNo = set.toArray(new String[set.size()]);
 
                         // ArrayAdapter用來管理整個選項的內容與樣式，android.R.layout.simple_spinner_item為內建預設樣式
                         adapter = new ArrayAdapter<>
                                 (getActivity(), android.R.layout.simple_spinner_item, deliveryNo);
-//                        // android.R.layout.simple_spinner_dropdown_item為內建下拉選單樣式
+
+                        // android.R.layout.simple_spinner_dropdown_item為內建下拉選單樣式
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spDeliverySearchOption.setAdapter(adapter);
                         spDeliverySearchOption.setSelection(0, true);
@@ -137,7 +147,7 @@ public class DeliveryFragment extends Fragment {
         // check if the device connect to the network
         if (Util.networkConnected(getActivity())) {
 
-            //宣告JasonObject物件，利用getDeliveryTask非同步任務連線到Servlet的 if ("getAll".equals(action))
+            // 宣告JasonObject物件，利用getDeliveryTask非同步任務連線到Servlet的 if ("getAll".equals(action))
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "getAll");
             String jsonOut = jsonObject.toString();
@@ -145,7 +155,7 @@ public class DeliveryFragment extends Fragment {
 
             try {
 
-                //將getDeliveryTask回傳的result重新轉型回List<DeliveryVO>物件
+                // 將getDeliveryTask回傳的result重新轉型回List<DeliveryVO>物件
                 String jsonIn = getDeliveryTask.execute().get();
                 Type listType = new TypeToken<List<DeliveryVO>>() {
                 }.getType();
@@ -182,15 +192,6 @@ public class DeliveryFragment extends Fragment {
                 branch_No = view.findViewById(R.id.branch_No);
                 emp_No = view.findViewById(R.id.emp_No);
                 deliv_Status = view.findViewById(R.id.deliv_Status);
-//                deliv_Status.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
-//                        Bundle bundle = new Bundle();
-//                        intent.putExtras(bundle);
-//                        startActivity(intent);
-//                    }
-//                });
             }
         }
 
@@ -206,6 +207,8 @@ public class DeliveryFragment extends Fragment {
 
             final DeliveryVO delivery = deliveryList.get(position);
             String status = "";
+
+            // 根據派送單狀態設定按鈕文字顯示，並disable"尚未分配"、"派送完成"的點擊事件
             switch (delivery.getDeliv_status()) {
                 case "1":
                     status = "尚未分配";
@@ -227,6 +230,8 @@ public class DeliveryFragment extends Fragment {
             holder.deliv_Status.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    // bundle存派送單編號、員工編號，進入DeliveryDetailActivity頁面
                     Intent intent = new Intent(getActivity(), DeliveryDetailActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("delivNo",delivery.getDeliv_no());
@@ -243,14 +248,7 @@ public class DeliveryFragment extends Fragment {
         }
     }
 
-
-//    public void showResult(List<DeliveryVO> result) {
-//
-//
-//        rvDelivery.setAdapter(new DeliveryAdapter(result));
-//
-//    }
-
+    // 刷新派送單列表
     private void updateUI(String jsonOut) {
         getDeliveryTask = new CommonTask(Util.URL + "AndroidDeliveryServlet", jsonOut);
         List<DeliveryVO> deliveryList = null;

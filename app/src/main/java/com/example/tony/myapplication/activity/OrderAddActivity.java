@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderAddActivity extends AppCompatActivity {
-    private TextView tvDeskNum;
-    private Button btnMenuCancel,btnMenuOk;
     private ListView menuDetail;
     private OrderInvoiceAdapter adapter;
     private String branch_No,dek_No;
@@ -34,9 +32,9 @@ public class OrderAddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_add);
 
-        tvDeskNum = findViewById(R.id.tvDeskNum);
-        btnMenuCancel = findViewById(R.id.btnMenuCancel);
-        btnMenuOk = findViewById(R.id.btnMenuOk);
+        TextView tvDeskNum = findViewById(R.id.tvDeskNum);
+        Button btnMenuCancel = findViewById(R.id.btnMenuCancel);
+        Button btnMenuOk = findViewById(R.id.btnMenuOk);
         menuDetail = findViewById(R.id.MenuDetail);
 
         Bundle bundle = this.getIntent().getExtras();
@@ -57,7 +55,8 @@ public class OrderAddActivity extends AppCompatActivity {
                 OrderAddActivity.this.finish();
             }
         });
-        // 進入訂單確認頁面
+
+        // bundle存桌位編號、分店編號、桌位流水號、餐點明細List﹐進入訂單確認頁面
         btnMenuOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,7 +92,6 @@ public class OrderAddActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int position) {
-//            return Integer.parseInt(orderList.get(position).getInvo_No());
             return position;
         }
 
@@ -121,6 +119,8 @@ public class OrderAddActivity extends AppCompatActivity {
             holder.ivDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    // 餐點明細List移除該項資料，通知Adapter刷新頁面
                     orderList.remove(position);
                     notifyDataSetChanged();
                     Toast.makeText(OrderAddActivity.this,orderInvoice.getMenu_Id()+"已刪除",Toast.LENGTH_SHORT).show();

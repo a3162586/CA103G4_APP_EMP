@@ -34,7 +34,6 @@
                 android:entries="@array/deliverySearch_array"
                 android:spinnerMode="dropdown" />
 
-
             <Spinner
                 android:id="@+id/spDeliverySearchOption"
                 android:layout_width="200dp"
@@ -85,7 +84,6 @@
                 android:gravity="center"/>
 
         </LinearLayout>
-
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvDelivery"

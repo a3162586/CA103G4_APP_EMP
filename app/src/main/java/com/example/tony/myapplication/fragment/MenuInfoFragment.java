@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.tony.myapplication.MenuVO;
 import com.example.tony.myapplication.OrderInvoiceVO;
@@ -91,7 +90,6 @@ public class MenuInfoFragment extends Fragment {
             Util.showToast(getActivity(), R.string.msg_NoNetwork);
         }
 
-
 //        Bundle bundle = this.getArguments();
 //        position = bundle.getInt("position");
 
@@ -142,13 +140,6 @@ public class MenuInfoFragment extends Fragment {
             menuImageTask = new ImageTask(url, pk, imageSize, holder.ivMenu_Photo);
             menuImageTask.execute();
 
-            holder.ivMenu_Photo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(getActivity(),menu.getMenu_Id(),Toast.LENGTH_SHORT).show();
-                }
-            });
-
             holder.btnMenu_Add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -180,6 +171,10 @@ public class MenuInfoFragment extends Fragment {
         if (getMenuTask != null) {
             getMenuTask.cancel(true);
             getMenuTask = null;
+        }
+        if (menuImageTask != null) {
+            menuImageTask.cancel(true);
+            menuImageTask = null;
         }
         super.onPause();
     }
