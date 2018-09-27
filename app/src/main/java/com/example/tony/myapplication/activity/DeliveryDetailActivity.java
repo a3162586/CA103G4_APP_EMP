@@ -22,8 +22,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.tony.myapplication.AddressVO;
-import com.example.tony.myapplication.OrderInvoiceVO;
 import com.example.tony.myapplication.OrderInvoiceWithMenuVO;
 import com.example.tony.myapplication.OrderformVO;
 import com.example.tony.myapplication.R;
@@ -43,7 +41,6 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -60,7 +57,7 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
     private RecyclerView rvOrderDetail;
     private TextView tvDelivNo,tvEmpName;
     private final static String TAG = "DeliveryDetailActivity";
-    private CommonTask getDeliveryTask;
+    private CommonTask getDeliveryTask,getEmpNameTask;
 
     private static final int MY_REQUEST_CODE = 0;
     private static final int REQUEST_CODE_RESOLUTION = 1;
@@ -69,7 +66,7 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
     private Location location;
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
-    private List<AddressVO> list = new ArrayList<>();
+    private List<OrderformVO> orderList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +80,7 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
         String delivNo = bundle.getString("delivNo");
         String empNo = bundle.getString("empNo");
         tvDelivNo.setText(delivNo);
-        tvEmpName.setText(empNo);
+        tvEmpName.setText(changeEmpNoToEmpName(empNo));
 
         // check if the device connect to the network
         if (Util.networkConnected(this)) {
@@ -95,7 +92,6 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
             String jsonOut = jsonObject.toString();
             getDeliveryTask = new CommonTask(Util.URL + "AndroidOrderformServlet", jsonOut);
 
-            List<OrderformVO> orderList = null;
             try {
 
                 //將getDeliveryTask回傳的result重新轉型回List<DeliveryVO>物件
@@ -116,7 +112,7 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
             Util.showToast(this, R.string.msg_NoNetwork);
         }
 
-        initAddress();
+//        initAddress();
     }
 
     @Override
@@ -175,9 +171,9 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
         // 取得自己位置的緯經度
         sb.append(location.getLatitude()+","+location.getLongitude()+"/");
 
-        for(AddressVO addressVO : list) {
+        for(OrderformVO orderformVO : orderList) {
 
-            String locationName = addressVO.getAddress();
+            String locationName = orderformVO.getDeliv_addres();
 
             if (location == null || locationName.isEmpty())
                 return;
@@ -337,7 +333,7 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
                         memIdStr.append("　　　　   "+oiwmVO.getMenuVO().getMenu_Id()+"  X 1"+"\n");
                     count++;
                 }
-                holder.mem_Id.setText(memIdStr);
+                holder.mem_Id.setText(memIdStr.substring(0,memIdStr.length()-2));
             } catch (Exception e) {
                 holder.mem_Id.setText("mem_Id");
             }
@@ -391,9 +387,37 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
         }
     }
 
-    public void initAddress() {
-        list.add(new AddressVO("桃園市桃園區同德十一路88號"));
-        list.add(new AddressVO("桃園市桃園區寶慶路47號"));
-        list.add(new AddressVO("桃園市中壢區中和路102號"));
+    public String changeEmpNoToEmpName(String empNo){
+
+        String empName = null;
+
+        // check if the device connect to the network
+        if (Util.networkConnected(this)) {
+
+            //宣告JasonObject物件，利用getDeliveryTask非同步任務連線到Servlet的 if ("getAll".equals(action))
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "getEmpNameByEmpNo");
+            jsonObject.addProperty("empNo", empNo);
+            String jsonOut = jsonObject.toString();
+            getEmpNameTask = new CommonTask(Util.URL + "AndroidEmployeeServlet", jsonOut);
+
+            try {
+
+                //將getDeliveryTask回傳的result重新轉型回List<DeliveryVO>物件
+                String jsonIn = getEmpNameTask.execute().get();
+                Type listType = new TypeToken<String>() {
+                }.getType();
+                empName = gson.fromJson(jsonIn, listType);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+            if (empName == null || empName.isEmpty()) {
+                return "NoName";
+            }
+
+        } else {
+            Util.showToast(this, R.string.msg_NoNetwork);
+        }
+        return empName;
     }
 }

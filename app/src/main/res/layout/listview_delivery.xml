@@ -34,7 +34,6 @@
     <Button
         android:id="@+id/deliv_Status"
         android:text="派送狀態"
-        android:textColor="@color/colorBlack"
         android:layout_width="80dp"
         android:layout_height="36dp" />
 
