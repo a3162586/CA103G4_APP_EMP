@@ -118,44 +118,15 @@ public class ServeFragment extends Fragment {
             Util.showToast(getActivity(), R.string.msg_NoNetwork);
         }
 
-        List<String> list = new ArrayList<>();
-        list.add("請選擇...");
-        ArrayAdapter<String> adapter;
+        List<String> splist = new ArrayList<>();
+        splist.add("請選擇...");
 
         for(DeskVO deskVO : deskList) {
             if(deskVO.getDek_id() != null)
-                list.add(deskVO.getDek_id());
+                splist.add(deskVO.getDek_id());
         }
-        String[] dek_Id = list.toArray(new String[list.size()]);
-
-        // ArrayAdapter用來管理整個選項的內容與樣式，android.R.layout.simple_spinner_item為內建預設樣式
-        adapter = new ArrayAdapter<>
-                (getActivity(), android.R.layout.simple_spinner_item, dek_Id);
-                        // android.R.layout.simple_spinner_dropdown_item為內建下拉選單樣式
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spServeDeskSearch.setAdapter(adapter);
-        spServeDeskSearch.setSelection(0, true);
-        spServeDeskSearch.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String defaultOption = spServeDeskSearch.getSelectedItem().toString();
-                if(!"請選擇...".equals(defaultOption)) {
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("action", "getOrderNoByDekNoAndOrderStatus");
-                    jsonObject.addProperty("dekNo", deskList.get(i-1).getDek_no());
-                    itemPosition = i-1;
-                    jsonObject.addProperty("orderStatus", "1");
-                    String jsonOut = jsonObject.toString();
-                    updateUI(jsonOut);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                // nothing to do
-            }
-        });
-
+        String[] dek_Id = splist.toArray(new String[splist.size()]);
+        spinnerInit(dek_Id);
 
         return view;
 
@@ -228,6 +199,8 @@ public class ServeFragment extends Fragment {
         }
         if (serveList == null || serveList.isEmpty()) {
             Util.showToast(getActivity(), R.string.msg_DeskNotFound);
+            deskList.get(itemPosition).getDek_no();
+            rvServe.setAdapter(null);
         } else {
             rvServe.setAdapter(new ServeFragment.ServeAdapter(serveList));
         }
@@ -249,6 +222,37 @@ public class ServeFragment extends Fragment {
         } else {
             Toast.makeText(getActivity(), "出餐狀態更新成功!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void spinnerInit(String[] dek_Id) {
+        // ArrayAdapter用來管理整個選項的內容與樣式，android.R.layout.simple_spinner_item為內建預設樣式
+        ArrayAdapter<String> adapter;
+        adapter = new ArrayAdapter<>
+                (getActivity(), android.R.layout.simple_spinner_item, dek_Id);
+        // android.R.layout.simple_spinner_dropdown_item為內建下拉選單樣式
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spServeDeskSearch.setAdapter(adapter);
+        spServeDeskSearch.setSelection(0, true);
+        spServeDeskSearch.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String defaultOption = spServeDeskSearch.getSelectedItem().toString();
+                if(!"請選擇...".equals(defaultOption)) {
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("action", "getOrderNoByDekNoAndOrderStatus");
+                    jsonObject.addProperty("dekNo", deskList.get(i-1).getDek_no());
+                    itemPosition = i-1;
+                    jsonObject.addProperty("orderStatus", "1");
+                    String jsonOut = jsonObject.toString();
+                    updateUI(jsonOut);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // nothing to do
+            }
+        });
     }
 
     @Override

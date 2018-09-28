@@ -56,10 +56,8 @@ public class OrderConfirmActivity extends AppCompatActivity {
         final String dek_Id = bundle.getString("dek_Id");
         final String branch_No = bundle.getString("branch_No");
         final String dek_No = bundle.getString("dek_No");
+        final int totalAmount = bundle.getInt("totalAmount");
         orderList = (List<OrderInvoiceVO>) bundle.getSerializable("orderList");
-
-        // 計算訂單總金額
-        final int totalAmount = CalTotalAmount();
 
         tvDeskNum = findViewById(R.id.tvDeskNum);
         tvTotalAmount =findViewById(R.id.tvTotalAmount);
@@ -248,19 +246,6 @@ public class OrderConfirmActivity extends AppCompatActivity {
     // 計算同類餐點數量
     private int CalQuantity() {
         return 1;
-    }
-
-    // 計算訂單總金額
-    private int CalTotalAmount() {
-        int totalAmount = 0;
-        try {
-            for(OrderInvoiceVO oi : orderList) {
-                totalAmount += oi.getMenu_Price();
-            }
-        } catch (NullPointerException ne) {
-            ne.printStackTrace();
-        }
-        return  totalAmount;
     }
 
     @Override

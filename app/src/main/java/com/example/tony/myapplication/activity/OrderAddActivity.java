@@ -60,11 +60,19 @@ public class OrderAddActivity extends AppCompatActivity {
         btnMenuOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // 計算訂單總金額
+                int totalAmount = CalTotalAmount();
+                if(totalAmount == 0) {
+                    Toast.makeText(OrderAddActivity.this, "未選擇餐點!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(OrderAddActivity.this,OrderConfirmActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("dek_Id",dek_Id);
                 bundle.putString("branch_No",branch_No);
                 bundle.putString("dek_No",dek_No);
+                bundle.putInt("totalAmount",totalAmount);
                 bundle.putSerializable("orderList", (Serializable) orderList);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -151,6 +159,19 @@ public class OrderAddActivity extends AppCompatActivity {
         this.orderList = orderList;
         adapter = new OrderInvoiceAdapter(this,orderList);
         menuDetail.setAdapter(adapter);
+    }
+
+    // 計算訂單總金額
+    private int CalTotalAmount() {
+        int totalAmount = 0;
+        try {
+            for(OrderInvoiceVO oi : orderList) {
+                totalAmount += oi.getMenu_Price();
+            }
+        } catch (NullPointerException ne) {
+            ne.printStackTrace();
+        }
+        return  totalAmount;
     }
 
 

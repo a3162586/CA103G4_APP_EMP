@@ -106,9 +106,7 @@ public class OrderFragment extends Fragment {
 
         @Override
         public long getItemId(int i) {
-
-            // Dek_id的第一個字為英文字，所以利用substring取得之後的字元轉型為int作為ItemId
-            return Integer.parseInt(deskList.get(i).getDek_id().substring(1));
+            return i;
         }
 
         @Override
