@@ -146,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStop();
         if (isEmployeeTask != null) {
             isEmployeeTask.cancel(true);
+            isEmployeeTask = null;
         }
     }
 
