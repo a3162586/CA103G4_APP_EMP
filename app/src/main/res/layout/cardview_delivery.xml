@@ -11,7 +11,8 @@
     android:layout_marginRight="16dp"
     android:layout_marginLeft="16dp"
     card_view:cardBackgroundColor="@color/colorLightYellow"
-    card_view:cardCornerRadius="15dp">
+    card_view:cardCornerRadius="15dp"
+    card_view:cardElevation="3dp">
 
     <RelativeLayout
         android:layout_width="match_parent"

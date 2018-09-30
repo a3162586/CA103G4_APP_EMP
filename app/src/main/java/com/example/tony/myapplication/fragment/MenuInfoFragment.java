@@ -33,7 +33,6 @@ import java.util.List;
 public class MenuInfoFragment extends Fragment {
 
     private RecyclerView rvMenuInfo;
-//    private int position;
     private final static String TAG = "MenuInfoFragment";
     private View view;
     private CommonTask getMenuTask;
@@ -89,9 +88,6 @@ public class MenuInfoFragment extends Fragment {
         } else {
             Util.showToast(getActivity(), R.string.msg_NoNetwork);
         }
-
-//        Bundle bundle = this.getArguments();
-//        position = bundle.getInt("position");
 
         return view;
     }
