@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tony.myapplication.CouponVO;
 import com.example.tony.myapplication.OrderInvoiceVO;
 import com.example.tony.myapplication.OrderformVO;
 import com.example.tony.myapplication.R;
@@ -27,7 +28,9 @@ import com.example.tony.myapplication.main.Util;
 import com.example.tony.myapplication.task.CommonTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class OrderConfirmActivity extends AppCompatActivity {
@@ -40,7 +43,9 @@ public class OrderConfirmActivity extends AppCompatActivity {
     private static final String PACKAGE = "com.google.zxing.client.android";
     private List<OrderInvoiceVO> orderList;
     private Gson gson = new Gson();
-    private CommonTask orderAddTask;
+    private CommonTask orderAddTask,getCouponTask;
+    private int totalAmount;
+    private CouponVO coupon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +61,7 @@ public class OrderConfirmActivity extends AppCompatActivity {
         final String dek_Id = bundle.getString("dek_Id");
         final String branch_No = bundle.getString("branch_No");
         final String dek_No = bundle.getString("dek_No");
-        final int totalAmount = bundle.getInt("totalAmount");
+        totalAmount = bundle.getInt("totalAmount");
         orderList = (List<OrderInvoiceVO>) bundle.getSerializable("orderList");
 
         tvDeskNum = findViewById(R.id.tvDeskNum);
@@ -213,6 +218,7 @@ public class OrderConfirmActivity extends AppCompatActivity {
             } else if (resultCode == RESULT_CANCELED) {
                 message = "Scan was Cancelled!";
             }
+            getCoupon(message);
             tvQrcode.setText(message);
         }
     }
@@ -241,6 +247,39 @@ public class OrderConfirmActivity extends AppCompatActivity {
                     }
                 });
         downloadDialog.show();
+    }
+
+    private void getCoupon(String coupSn) {
+
+        if (Util.networkConnected(this)) {
+
+            //宣告JasonObject物件，利用getCouponTask非同步任務連線到Servlet的 if ("getAll".equals(action))
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "getCouponByCoupSn");
+            jsonObject.addProperty("coupSn", coupSn);
+            String jsonOut = jsonObject.toString();
+            getCouponTask = new CommonTask(Util.URL + "AndroidCouponServlet", jsonOut);
+
+            try {
+
+                //將getCouponTask回傳的result重新轉型回CouponVO物件
+                String jsonIn = getCouponTask.execute().get();
+                Type listType = new TypeToken<CouponVO>() {
+                }.getType();
+                coupon = gson.fromJson(jsonIn, listType);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+            if (coupon == null || coupon.isEmpty()) {
+                Util.showToast(getActivity(), R.string.msg_CouponNotFound);
+            } else {
+                showResult(couponList);
+            }
+
+        } else {
+            Util.showToast(getActivity(), R.string.msg_NoNetwork);
+        }
+
     }
 
     // 計算同類餐點數量
