@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.tony.myapplication.CouponVO;
 import com.example.tony.myapplication.OrderInvoiceVO;
@@ -38,13 +38,13 @@ public class OrderConfirmActivity extends AppCompatActivity {
     private final static String TAG = "OrderConfirmActivity";
     private RecyclerView rvOrderDetail;
     private ImageView ivQrcode;
-    private TextView tvQrcode,tvDeskNum,tvTotalAmount;
+    private TextView tvQrcode,tvDeskNum,tvTotalAmount,tvDiscountTotalAmount;
     private Button btnMenuModify,btnMenuSubmit;
     private static final String PACKAGE = "com.google.zxing.client.android";
     private List<OrderInvoiceVO> orderList;
     private Gson gson = new Gson();
     private CommonTask orderAddTask,getCouponTask;
-    private int totalAmount;
+    private int totalAmount,discountTotalAmount;
     private CouponVO coupon;
 
     @Override
@@ -62,10 +62,12 @@ public class OrderConfirmActivity extends AppCompatActivity {
         final String branch_No = bundle.getString("branch_No");
         final String dek_No = bundle.getString("dek_No");
         totalAmount = bundle.getInt("totalAmount");
+        discountTotalAmount = totalAmount;
         orderList = (List<OrderInvoiceVO>) bundle.getSerializable("orderList");
 
         tvDeskNum = findViewById(R.id.tvDeskNum);
-        tvTotalAmount =findViewById(R.id.tvTotalAmount);
+        tvTotalAmount = findViewById(R.id.tvTotalAmount);
+        tvDiscountTotalAmount = findViewById(R.id.tvDiscountTotalAmount);
         ivQrcode = findViewById(R.id.ivQrcode);
         tvQrcode = findViewById(R.id.tvQrcode);
         btnMenuModify = findViewById(R.id.btnMenuModify);
@@ -88,7 +90,6 @@ public class OrderConfirmActivity extends AppCompatActivity {
         ivQrcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(OrderConfirmActivity.this, "test", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent("com.google.zxing.client.android.SCAN");
                 try {
                     startActivityForResult(intent, 0);
@@ -125,7 +126,10 @@ public class OrderConfirmActivity extends AppCompatActivity {
                     order.setDek_no(dek_No);
                     order.setBranch_no(branch_No);
                     order.setOrder_type(0);
-                    order.setOrder_price(totalAmount);
+                    if(discountTotalAmount != totalAmount)
+                        order.setOrder_price(discountTotalAmount);
+                    else
+                        order.setOrder_price(totalAmount);
                     order.setOrder_status(1);
                     order.setOrder_pstatus(1);
                     order.setOrderList(orderList);
@@ -136,6 +140,12 @@ public class OrderConfirmActivity extends AppCompatActivity {
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("action", "add");
                     jsonObject.addProperty("order", ordStr);
+                    try {
+                        jsonObject.addProperty("coupSn", coupon.getCoup_Sn());
+                    } catch (NullPointerException ne) {
+                        jsonObject.addProperty("coupSn", "");
+                    }
+
                     String jsonOut = jsonObject.toString();
                     orderAddTask = new CommonTask(url, jsonOut);
 
@@ -215,10 +225,12 @@ public class OrderConfirmActivity extends AppCompatActivity {
                 String contents = intent.getStringExtra("SCAN_RESULT");
                 String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
                 message = contents;
+                getCoupon(message);
             } else if (resultCode == RESULT_CANCELED) {
                 message = "Scan was Cancelled!";
+//                message = "M-00000000001";
             }
-            getCoupon(message);
+//            getCoupon(message);
             tvQrcode.setText(message);
         }
     }
@@ -270,14 +282,17 @@ public class OrderConfirmActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
             }
-            if (coupon == null || coupon.isEmpty()) {
-                Util.showToast(getActivity(), R.string.msg_CouponNotFound);
+            if (coupon == null) {
+                Util.showToast(this, R.string.msg_CouponNotFound);
             } else {
-                showResult(couponList);
+                discountTotalAmount = totalAmount;
+                discountTotalAmount -= coupon.getCoucatVO().getCoucat_Value();
+                tvTotalAmount.setPaintFlags(tvTotalAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                tvDiscountTotalAmount.setText("$"+Integer.toString(discountTotalAmount));
             }
 
         } else {
-            Util.showToast(getActivity(), R.string.msg_NoNetwork);
+            Util.showToast(this, R.string.msg_NoNetwork);
         }
 
     }

@@ -31,6 +31,16 @@
             android:textColor="@color/colorBlack"
             android:text="@string/TotalAmount"/>
 
+        <TextView
+            android:id="@+id/tvDiscountTotalAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tvTotalAmount"
+            android:textSize="32sp"
+            android:textColor="@color/colorRed"/>
+
     </RelativeLayout>
 
     <LinearLayout
