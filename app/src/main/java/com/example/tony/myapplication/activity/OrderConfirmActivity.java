@@ -227,10 +227,10 @@ public class OrderConfirmActivity extends AppCompatActivity {
                 message = contents;
                 getCoupon(message);
             } else if (resultCode == RESULT_CANCELED) {
-                message = "Scan was Cancelled!";
-//                message = "M-00000000001";
+//                message = "Scan was Cancelled!";
+                message = "M-00000000001";
             }
-//            getCoupon(message);
+            getCoupon(message);
             tvQrcode.setText(message);
         }
     }
