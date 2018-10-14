@@ -94,7 +94,7 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
 
             try {
 
-                //將getDeliveryTask回傳的result重新轉型回List<DeliveryVO>物件
+                //將getDeliveryTask回傳的result重新轉型回List<OrderformVO>物件
                 String jsonIn = getDeliveryTask.execute().get();
                 Type listType = new TypeToken<List<OrderformVO>>() {
                 }.getType();
@@ -328,12 +328,22 @@ public class DeliveryDetailActivity extends AppCompatActivity implements
                 orderInvoiceList = order.getOrderList2();
                 for(OrderInvoiceWithMenuVO oiwmVO : orderInvoiceList) {
                     if(count==0)
-                        memIdStr.append("訂購餐點 : "+oiwmVO.getMenuVO().getMenu_Id()+"  X 1"+"\n");
-                    else
-                        memIdStr.append("　　　　   "+oiwmVO.getMenuVO().getMenu_Id()+"  X 1"+"\n");
+                        if(oiwmVO.getMenuVO() != null) {
+                            memIdStr.append("訂購餐點 : "+oiwmVO.getMenuVO().getMenu_Id()+"  X "+oiwmVO.getMenu_nu()+"\n");
+                        } else {
+                            memIdStr.append("訂購餐點 : "+oiwmVO.getCustomVO().getcustom_Name()+"  X "+oiwmVO.getCustom_nu()+"\n");
+                        }
+                    else {
+                        if(oiwmVO.getMenuVO() != null) {
+                            memIdStr.append("　　　　   "+oiwmVO.getMenuVO().getMenu_Id()+"  X "+oiwmVO.getMenu_nu()+"\n");
+                        } else {
+                            memIdStr.append("　　　　   "+oiwmVO.getCustomVO().getcustom_Name()+"  X "+oiwmVO.getCustom_nu()+"\n");
+                        }
+                    }
+
                     count++;
                 }
-                holder.mem_Id.setText(memIdStr.substring(0,memIdStr.length()-2));
+                holder.mem_Id.setText(memIdStr.substring(0,memIdStr.length()-1));
             } catch (Exception e) {
                 holder.mem_Id.setText("mem_Id");
             }

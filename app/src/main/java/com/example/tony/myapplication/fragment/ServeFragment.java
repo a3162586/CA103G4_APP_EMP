@@ -42,9 +42,10 @@ public class ServeFragment extends Fragment {
     private CommonTask getServeTask;
     private List<OrderInvoiceWithMenuVO> serveList = null;
     private List<DeskVO> deskList = null;
-    private List<String> updateStatusList = new ArrayList<>();
+    private List<String> updateStatusList;
     private Gson gson = new Gson();
     private int itemPosition = 0;
+    private String orderNo = "";
 
     public ServeFragment() {
         // Required empty public constructor
@@ -88,45 +89,7 @@ public class ServeFragment extends Fragment {
             }
         });
 
-
-        // check if the device connect to the network
-        if (Util.networkConnected(getActivity())) {
-
-            // 宣告JasonObject物件，利用getDeliveryTask非同步任務連線到Servlet的 if ("getAll".equals(action))
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "getDeskByOrderTypeAndStatus");
-            jsonObject.addProperty("orderType", "0");
-            jsonObject.addProperty("orderStatus", "1");
-            String jsonOut = jsonObject.toString();
-            getServeTask = new CommonTask(Util.URL + "AndroidOrderformServlet", jsonOut);
-
-            try {
-
-                // 將getServeTask回傳的result重新轉型回List<DeskVO>物件
-                String jsonIn = getServeTask.execute().get();
-                Type listType = new TypeToken<List<DeskVO>>() {
-                }.getType();
-                deskList = new Gson().fromJson(jsonIn, listType);
-
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
-            if (deskList == null || deskList.isEmpty())
-                Util.showToast(getActivity(), R.string.msg_DeskNotFound);
-
-        } else {
-            Util.showToast(getActivity(), R.string.msg_NoNetwork);
-        }
-
-        List<String> splist = new ArrayList<>();
-        splist.add("請選擇...");
-
-        for(DeskVO deskVO : deskList) {
-            if(deskVO.getDek_id() != null)
-                splist.add(deskVO.getDek_id());
-        }
-        String[] dek_Id = splist.toArray(new String[splist.size()]);
-        spinnerInit(dek_Id);
+        updateDeskList();
 
         return view;
 
@@ -187,6 +150,49 @@ public class ServeFragment extends Fragment {
         }
     }
 
+    private void updateDeskList() {
+
+        // check if the device connect to the network
+        if (Util.networkConnected(getActivity())) {
+
+            // 宣告JasonObject物件，利用getDeliveryTask非同步任務連線到Servlet的 if ("getAll".equals(action))
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "getDeskByOrderTypeAndStatus");
+            jsonObject.addProperty("orderType", "0");
+            jsonObject.addProperty("orderStatus", "1");
+            String jsonOut = jsonObject.toString();
+            getServeTask = new CommonTask(Util.URL + "AndroidOrderformServlet", jsonOut);
+
+            try {
+
+                // 將getServeTask回傳的result重新轉型回List<DeskVO>物件
+                String jsonIn = getServeTask.execute().get();
+                Type listType = new TypeToken<List<DeskVO>>() {
+                }.getType();
+                deskList = new Gson().fromJson(jsonIn, listType);
+
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+            if (deskList == null || deskList.isEmpty())
+                Util.showToast(getActivity(), R.string.msg_DeskNotFound);
+
+        } else {
+            Util.showToast(getActivity(), R.string.msg_NoNetwork);
+        }
+
+        List<String> splist = new ArrayList<>();
+        splist.add("請選擇...");
+
+        for(DeskVO deskVO : deskList) {
+            if(deskVO.getDek_id() != null)
+                splist.add(deskVO.getDek_id());
+        }
+        String[] dek_Id = splist.toArray(new String[splist.size()]);
+        spinnerInit(dek_Id);
+
+    }
+
     private void updateUI(String jsonOut) {
         getServeTask = new CommonTask(Util.URL + "AndroidOrderformServlet", jsonOut);
         try {
@@ -198,8 +204,7 @@ public class ServeFragment extends Fragment {
             Log.e(TAG, e.toString());
         }
         if (serveList == null || serveList.isEmpty()) {
-            Util.showToast(getActivity(), R.string.msg_DeskNotFound);
-            deskList.get(itemPosition).getDek_no();
+            updateOrderStatus();
             rvServe.setAdapter(null);
         } else {
             rvServe.setAdapter(new ServeFragment.ServeAdapter(serveList));
@@ -221,6 +226,29 @@ public class ServeFragment extends Fragment {
             Util.showToast(getActivity(), R.string.msg_DeskNotFound);
         } else {
             Toast.makeText(getActivity(), "出餐狀態更新成功!", Toast.LENGTH_SHORT).show();
+            orderNo = resultCheck;
+        }
+    }
+
+    private void updateOrderStatus() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("action", "updateOrderStatus");
+        jsonObject.addProperty("orderNo", orderNo);
+        String jsonOut = jsonObject.toString();
+        getServeTask = new CommonTask(Util.URL + "AndroidOrderformServlet", jsonOut);
+        String resultCheck = null;
+        try {
+            String jsonIn = getServeTask.execute().get();
+            Type type = new TypeToken<String>() {
+            }.getType();
+            resultCheck = new Gson().fromJson(jsonIn, type);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+        if (resultCheck == null || resultCheck.isEmpty()) {
+            Toast.makeText(getActivity(), "訂單狀態更新失敗!", Toast.LENGTH_SHORT).show();
+        } else {
+            updateDeskList();
         }
     }
 
@@ -238,6 +266,7 @@ public class ServeFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String defaultOption = spServeDeskSearch.getSelectedItem().toString();
                 if(!"請選擇...".equals(defaultOption)) {
+                    updateStatusList = new ArrayList<>();
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("action", "getOrderNoByDekNoAndOrderStatus");
                     jsonObject.addProperty("dekNo", deskList.get(i-1).getDek_no());

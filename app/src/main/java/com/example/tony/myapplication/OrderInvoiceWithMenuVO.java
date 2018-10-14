@@ -6,9 +6,20 @@ public class OrderInvoiceWithMenuVO {
     private String order_no;
     private String menu_no;
     private String custom_no;
+    private String menu_nu;
+    private String custom_nu;
     private Integer invo_status;
 
     private MenuVO menuVO;
+    private CustommealsVO customVO;
+
+    public CustommealsVO getCustomVO() {
+        return customVO;
+    }
+
+    public void setCustomVO(CustommealsVO customVO) {
+        this.customVO = customVO;
+    }
 
     public MenuVO getMenuVO() {
         return menuVO;
@@ -16,6 +27,22 @@ public class OrderInvoiceWithMenuVO {
 
     public void setMenuVO(MenuVO menuVO) {
         this.menuVO = menuVO;
+    }
+
+    public String getMenu_nu() {
+        return menu_nu;
+    }
+
+    public void setMenu_nu(String menu_nu) {
+        this.menu_nu = menu_nu;
+    }
+
+    public String getCustom_nu() {
+        return custom_nu;
+    }
+
+    public void setCustom_nu(String custom_nu) {
+        this.custom_nu = custom_nu;
     }
 
     public String getInvo_no() {
